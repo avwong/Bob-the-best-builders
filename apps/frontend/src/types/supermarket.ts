@@ -95,6 +95,7 @@ export interface Product {
     };
     price?: number;
     image_url?: string;
+    keywords?: string[];
 }
 
 export interface EditorState {

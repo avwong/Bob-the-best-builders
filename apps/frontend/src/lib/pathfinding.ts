@@ -5,7 +5,7 @@
  * Uses A* algorithm with Manhattan distance heuristic for 4-directional movement
  */
 
-import type { Point, PathNode, PathResult, Grid, StoreLayout } from './types';
+import type { Point, PathNode, PathResult, Grid, StoreLayout, Dimensions } from './types';
 import {
   manhattanDistance,
   pointsEqual,
@@ -297,88 +297,42 @@ export function findPathEnhanced(
 // ============================================================================
 
 /**
- * Create a walkability grid from store layout
- * 
+ * Create a walkability grid from store layout.
+ * All cells start walkable; shelves and walls are marked as obstacles.
+ *
  * @param layout - Store layout configuration
  * @returns 2D boolean grid (true = walkable, false = obstacle)
  */
 export function createGridFromLayout(layout: StoreLayout): Grid {
   const { width, height } = layout.dimensions;
-  
-  // Initialize grid - all cells are obstacles by default
+
+  // Initialize grid — all cells walkable by default
   const grid: Grid = Array(height)
     .fill(null)
-    .map(() => Array(width).fill(false));
+    .map(() => Array(width).fill(true));
 
-  // Mark walkways as walkable
-  for (const walkway of layout.walkways) {
-    markRectangleWalkable(
-      grid,
-      walkway.start.x,
-      walkway.start.y,
-      walkway.end.x,
-      walkway.end.y
-    );
+  // Mark shelves as obstacles
+  for (const shelf of layout.shelves) {
+    markRectangleObstacle(grid, shelf.position, shelf.dimensions);
   }
 
-  // Mark special zones as walkable if specified
-  for (const zone of layout.special_zones) {
-    if (zone.walkable) {
-      markRectangleWalkable(
-        grid,
-        zone.position.x,
-        zone.position.y,
-        zone.position.x + zone.position.width,
-        zone.position.y + zone.position.height
-      );
-    }
-  }
-
-  // Mark aisle entrances as walkable
-  for (const aisle of layout.aisles) {
-    for (const entrance of aisle.entrances) {
-      const entranceX = Number(entrance.x);
-      const entranceY = Number(entrance.y);
-
-      if (
-        Number.isInteger(entranceX) &&
-        Number.isInteger(entranceY) &&
-        entranceX >= 0 &&
-        entranceY >= 0 &&
-        isInBounds({ x: entranceX, y: entranceY }, width, height)
-      ) {
-        grid[entranceY][entranceX] = true;
-      }
-    }
+  // Mark walls as obstacles
+  for (const wall of layout.walls) {
+    markRectangleObstacle(grid, wall.position, wall.dimensions);
   }
 
   return grid;
 }
 
-/**
- * Mark a rectangular area as walkable in the grid
- * 
- * @param grid - Grid to modify
- * @param x1 - Start x coordinate
- * @param y1 - Start y coordinate
- * @param x2 - End x coordinate
- * @param y2 - End y coordinate
- */
-function markRectangleWalkable(
-  grid: Grid,
-  x1: number,
-  y1: number,
-  x2: number,
-  y2: number
-): void {
-  const minX = Math.max(0, Math.min(x1, x2));
-  const maxX = Math.min(grid[0].length - 1, Math.max(x1, x2));
-  const minY = Math.max(0, Math.min(y1, y2));
-  const maxY = Math.min(grid.length - 1, Math.max(y1, y2));
+function markRectangleObstacle(grid: Grid, position: Point, dimensions: Dimensions): void {
+  const minX = Math.max(0, Math.floor(position.x));
+  const maxX = Math.min(grid[0].length - 1, Math.floor(position.x + dimensions.width) - 1);
+  const minY = Math.max(0, Math.floor(position.y));
+  const maxY = Math.min(grid.length - 1, Math.floor(position.y + dimensions.height) - 1);
 
   for (let y = minY; y <= maxY; y++) {
     for (let x = minX; x <= maxX; x++) {
-      grid[y][x] = true;
+      grid[y][x] = false;
     }
   }
 }

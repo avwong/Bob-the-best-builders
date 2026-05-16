@@ -7,27 +7,37 @@
 
 // Export all types
 export type {
+  // Coordinate & dimension primitives
   Point,
+  Position,
+  Dimensions,
+  // Grid & pathfinding
   Grid,
   GridCell,
   PathNode,
   PathResult,
+  GridConfig,
+  // Store layout
   StoreLayout,
-  StoreDimensions,
-  Aisle,
+  Shelf,
   SpecialZone,
   Checkout,
-  Walkway,
+  EntryExit,
+  Wall,
+  // Products
   Product,
   ProductLocation,
-  UserLocation,
-  NavigationRequest,
-  NavigationResult,
-  GridConfig,
+  // Search
   SearchOptions,
   SearchResult,
   SearchMatch,
   SynonymMap,
+  // Navigation
+  UserLocation,
+  NavigationRequest,
+  NavigationResult,
+  // Editor
+  EditorState,
 } from './types';
 
 // Export utility functions

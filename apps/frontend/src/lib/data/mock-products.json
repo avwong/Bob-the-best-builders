@@ -5,7 +5,7 @@
       "name": "Coca-Cola Classic 2L",
       "category": "Beverages",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "A",
         "shelf_side": "left",
         "shelf_section": "middle",
@@ -20,7 +20,7 @@
       "name": "Pepsi Cola 2L",
       "category": "Beverages",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "A",
         "shelf_side": "left",
         "shelf_section": "middle",
@@ -35,7 +35,7 @@
       "name": "Sprite Lemon-Lime 2L",
       "category": "Beverages",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "A",
         "shelf_side": "left",
         "shelf_section": "middle",
@@ -258,7 +258,7 @@
       "name": "Potato Chips Original 10oz",
       "category": "Snacks",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "C",
         "shelf_side": "right",
         "shelf_section": "middle",
@@ -273,7 +273,7 @@
       "name": "Tortilla Chips 13oz",
       "category": "Snacks",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "C",
         "shelf_side": "right",
         "shelf_section": "middle",
@@ -288,7 +288,7 @@
       "name": "Chocolate Candy Bar 6 Pack",
       "category": "Snacks",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "C",
         "shelf_side": "left",
         "shelf_section": "top",
@@ -303,7 +303,7 @@
       "name": "Mixed Nuts 16oz",
       "category": "Snacks",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "C",
         "shelf_side": "left",
         "shelf_section": "middle",
@@ -318,7 +318,7 @@
       "name": "Vanilla Ice Cream 1.5 Quart",
       "category": "Frozen",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "F",
         "shelf_side": "left",
         "shelf_section": "bottom",
@@ -333,7 +333,7 @@
       "name": "Frozen Pizza Pepperoni",
       "category": "Frozen",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "F",
         "shelf_side": "right",
         "shelf_section": "middle",
@@ -348,7 +348,7 @@
       "name": "Frozen Mixed Vegetables 16oz",
       "category": "Frozen",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "F",
         "shelf_side": "right",
         "shelf_section": "middle",
@@ -363,7 +363,7 @@
       "name": "Spaghetti Pasta 16oz",
       "category": "Pantry",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "B",
         "shelf_side": "left",
         "shelf_section": "middle",
@@ -378,7 +378,7 @@
       "name": "White Rice 2lb",
       "category": "Pantry",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "B",
         "shelf_side": "left",
         "shelf_section": "bottom",
@@ -393,7 +393,7 @@
       "name": "Corn Flakes Cereal 18oz",
       "category": "Pantry",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "D",
         "shelf_side": "right",
         "shelf_section": "top",
@@ -408,7 +408,7 @@
       "name": "Olive Oil Extra Virgin 16oz",
       "category": "Pantry",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "B",
         "shelf_side": "right",
         "shelf_section": "middle",
@@ -423,7 +423,7 @@
       "name": "Granulated Sugar 4lb",
       "category": "Pantry",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "B",
         "shelf_side": "right",
         "shelf_section": "bottom",
@@ -438,7 +438,7 @@
       "name": "All-Purpose Flour 5lb",
       "category": "Pantry",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "B",
         "shelf_side": "left",
         "shelf_section": "bottom",
@@ -466,7 +466,7 @@
       "name": "Bottled Water 24 Pack",
       "category": "Beverages",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "A",
         "shelf_side": "right",
         "shelf_section": "bottom",
@@ -481,7 +481,7 @@
       "name": "Ground Coffee 12oz",
       "category": "Beverages",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "D",
         "shelf_side": "left",
         "shelf_section": "middle",
@@ -496,7 +496,7 @@
       "name": "Black Tea Bags 100 Count",
       "category": "Beverages",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "D",
         "shelf_side": "left",
         "shelf_section": "middle",
@@ -628,7 +628,7 @@
       "name": "Saltine Crackers 16oz",
       "category": "Snacks",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "C",
         "shelf_side": "right",
         "shelf_section": "top",
@@ -643,7 +643,7 @@
       "name": "Peanuts Roasted Salted 16oz",
       "category": "Snacks",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "C",
         "shelf_side": "left",
         "shelf_section": "middle",
@@ -658,7 +658,7 @@
       "name": "Chocolate Ice Cream 1.5 Quart",
       "category": "Frozen",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "F",
         "shelf_side": "left",
         "shelf_section": "bottom",
@@ -673,7 +673,7 @@
       "name": "Brown Rice 2lb",
       "category": "Pantry",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "B",
         "shelf_side": "left",
         "shelf_section": "bottom",
@@ -688,7 +688,7 @@
       "name": "Oatmeal Quick Oats 18oz",
       "category": "Pantry",
       "location": {
-        "zone_type": "aisle",
+        "zone_type": "shelf",
         "zone_id": "D",
         "shelf_side": "right",
         "shelf_section": "middle",
