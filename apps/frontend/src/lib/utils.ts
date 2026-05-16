@@ -1,11 +1,17 @@
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+import type { Point } from './types';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
 /**
  * Aisly - Pathfinding Utility Functions
- * 
+ *
  * Helper functions for grid operations, distance calculations, and path manipulation
  * Optimized for 4-directional movement (no diagonals) in supermarket aisles
  */
-
-import type { Point } from './types';
 
 // ============================================================================
 // Distance Calculation
@@ -15,7 +21,7 @@ import type { Point } from './types';
  * Calculate Manhattan distance (L1 norm) between two points
  * Perfect for grid-based pathfinding where only 4-directional movement is allowed
  * (up, down, left, right - no diagonals through aisles)
- * 
+ *
  * @param a - First point
  * @param b - Second point
  * @returns Manhattan distance
@@ -27,7 +33,7 @@ export function manhattanDistance(a: Point, b: Point): number {
 /**
  * Calculate Euclidean distance (straight-line distance) between two points
  * Used for display purposes and distance estimation, not for pathfinding heuristic
- * 
+ *
  * @param a - First point
  * @param b - Second point
  * @returns Euclidean distance
@@ -44,7 +50,7 @@ export function euclideanDistance(a: Point, b: Point): number {
 
 /**
  * Check if two points are equal
- * 
+ *
  * @param a - First point
  * @param b - Second point
  * @returns True if points are equal
@@ -55,7 +61,7 @@ export function pointsEqual(a: Point, b: Point): boolean {
 
 /**
  * Check if a point is within grid bounds
- * 
+ *
  * @param point - Point to check
  * @param width - Grid width
  * @param height - Grid height
@@ -68,7 +74,7 @@ export function isInBounds(point: Point, width: number, height: number): boolean
 /**
  * Get neighboring points (4-directional only: up, down, left, right)
  * No diagonal movement - customers must follow walkways
- * 
+ *
  * @param point - Center point
  * @param width - Grid width
  * @param height - Grid height
@@ -78,8 +84,8 @@ export function getNeighbors(point: Point, width: number, height: number): Point
   const neighbors: Point[] = [];
   const directions = [
     { x: 0, y: -1 }, // North (up)
-    { x: 1, y: 0 },  // East (right)
-    { x: 0, y: 1 },  // South (down)
+    { x: 1, y: 0 }, // East (right)
+    { x: 0, y: 1 }, // South (down)
     { x: -1, y: 0 }, // West (left)
   ];
 
@@ -95,7 +101,7 @@ export function getNeighbors(point: Point, width: number, height: number): Point
 
 /**
  * Get direction from one point to another
- * 
+ *
  * @param from - Starting point
  * @param to - Ending point
  * @returns Direction string
@@ -118,7 +124,7 @@ export function getDirection(from: Point, to: Point): 'north' | 'south' | 'east'
 
 /**
  * Calculate total path length using Manhattan distance
- * 
+ *
  * @param path - Array of points forming the path
  * @returns Total distance in grid units
  */
@@ -137,7 +143,7 @@ export function calculatePathLength(path: Point[]): number {
  * Smooth path by removing unnecessary waypoints
  * Uses line-of-sight algorithm to remove intermediate points
  * Only works with 4-directional movement
- * 
+ *
  * @param path - Original path
  * @param grid - Walkability grid
  * @returns Smoothed path
@@ -170,7 +176,7 @@ export function smoothPath(path: Point[], grid: boolean[][]): Point[] {
 /**
  * Check if there's a clear line of sight between two points
  * Uses Bresenham's line algorithm for 4-directional movement
- * 
+ *
  * @param start - Starting point
  * @param end - Ending point
  * @param grid - Walkability grid
@@ -189,7 +195,7 @@ export function hasLineOfSight(start: Point, end: Point, grid: boolean[][]): boo
 
 /**
  * Generate points along a line using Bresenham's algorithm
- * 
+ *
  * @param start - Starting point
  * @param end - Ending point
  * @returns Array of points along the line
@@ -229,7 +235,7 @@ export function bresenhamLine(start: Point, end: Point): Point[] {
 /**
  * Simplify path by removing collinear points
  * Removes intermediate points that lie on the same straight line
- * 
+ *
  * @param path - Original path
  * @returns Simplified path
  */
@@ -262,7 +268,7 @@ export function simplifyPath(path: Point[]): Point[] {
 
 /**
  * Convert pixel coordinates to grid coordinates
- * 
+ *
  * @param pixelX - X coordinate in pixels
  * @param pixelY - Y coordinate in pixels
  * @param cellSize - Size of each grid cell in pixels
@@ -277,7 +283,7 @@ export function pixelToGrid(pixelX: number, pixelY: number, cellSize: number): P
 
 /**
  * Convert grid coordinates to pixel coordinates (center of cell)
- * 
+ *
  * @param gridX - X coordinate in grid
  * @param gridY - Y coordinate in grid
  * @param cellSize - Size of each grid cell in pixels
@@ -297,7 +303,7 @@ export function gridToPixel(gridX: number, gridY: number, cellSize: number): Poi
 /**
  * Estimate walking time based on path distance
  * Assumes average walking speed of 1.4 m/s (5 km/h)
- * 
+ *
  * @param distance - Distance in meters
  * @param walkingSpeed - Walking speed in m/s (default: 1.4)
  * @returns Estimated time in seconds
@@ -308,7 +314,7 @@ export function estimateWalkingTime(distance: number, walkingSpeed: number = 1.4
 
 /**
  * Format time in seconds to human-readable string
- * 
+ *
  * @param seconds - Time in seconds
  * @returns Formatted time string
  */
@@ -333,7 +339,7 @@ export function formatTime(seconds: number): string {
 
 /**
  * Generate turn-by-turn instructions from a path
- * 
+ *
  * @param path - Array of points forming the path
  * @returns Array of instruction strings
  */
@@ -361,7 +367,7 @@ export function generateInstructions(path: Point[]): string[] {
 
 /**
  * Determine turn direction between two movement directions
- * 
+ *
  * @param from - Current direction
  * @param to - Next direction
  * @returns Turn instruction
@@ -385,7 +391,7 @@ function getTurnDirection(from: string, to: string): string {
 
 /**
  * Visualize grid in console (for debugging)
- * 
+ *
  * @param grid - Walkability grid
  * @param path - Optional path to highlight
  * @param start - Optional start point
@@ -397,7 +403,7 @@ export function visualizeGrid(
   start?: Point,
   goal?: Point
 ): void {
-  const pathSet = new Set(path?.map(p => `${p.x},${p.y}`) || []);
+  const pathSet = new Set(path?.map((p) => `${p.x},${p.y}`) || []);
 
   console.log('Grid Visualization:');
   console.log('Legend: . = walkable, # = obstacle, * = path, S = start, G = goal');
