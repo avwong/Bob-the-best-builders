@@ -1,0 +1,275 @@
+{
+    "store_id": "demo_supermarket_001",
+    "store_name": "Aisly Demo Market",
+    "version": "1.0",
+    "dimensions": {
+        "width": 60,
+        "height": 40,
+        "unit": "meters"
+    },
+    "grid": {
+        "cell_size": 1,
+        "walkable_paths": [
+            "Main horizontal corridor",
+            "Vertical aisles",
+            "Perimeter walkway"
+        ]
+    },
+    "aisles": [
+        {
+            "id": "aisle_a",
+            "label": "A",
+            "type": "standard_aisle",
+            "position": {
+                "x": 5,
+                "y": 8
+            },
+            "dimensions": {
+                "width": 4,
+                "height": 15
+            },
+            "orientation": "vertical",
+            "category": "Beverages & Snacks",
+            "shelves": {
+                "left": {
+                    "sections": [
+                        "top",
+                        "middle",
+                        "bottom"
+                    ]
+                },
+                "right": {
+                    "sections": [
+                        "top",
+                        "middle",
+                        "bottom"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "aisle_b",
+            "label": "B",
+            "type": "standard_aisle",
+            "position": {
+                "x": 11,
+                "y": 8
+            },
+            "dimensions": {
+                "width": 4,
+                "height": 15
+            },
+            "orientation": "vertical",
+            "category": "Canned Goods & Pasta",
+            "shelves": {
+                "left": {
+                    "sections": [
+                        "top",
+                        "middle",
+                        "bottom"
+                    ]
+                },
+                "right": {
+                    "sections": [
+                        "top",
+                        "middle",
+                        "bottom"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "aisle_c",
+            "label": "C",
+            "type": "standard_aisle",
+            "position": {
+                "x": 17,
+                "y": 8
+            },
+            "dimensions": {
+                "width": 4,
+                "height": 15
+            },
+            "orientation": "vertical",
+            "category": "Breakfast & Spreads",
+            "shelves": {
+                "left": {
+                    "sections": [
+                        "top",
+                        "middle",
+                        "bottom"
+                    ]
+                },
+                "right": {
+                    "sections": [
+                        "top",
+                        "middle",
+                        "bottom"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "aisle_d",
+            "label": "D",
+            "type": "standard_aisle",
+            "position": {
+                "x": 23,
+                "y": 8
+            },
+            "dimensions": {
+                "width": 4,
+                "height": 15
+            },
+            "orientation": "vertical",
+            "category": "Condiments & Sauces",
+            "shelves": {
+                "left": {
+                    "sections": [
+                        "top",
+                        "middle",
+                        "bottom"
+                    ]
+                },
+                "right": {
+                    "sections": [
+                        "top",
+                        "middle",
+                        "bottom"
+                    ]
+                }
+            }
+        }
+    ],
+    "special_zones": [
+        {
+            "id": "produce",
+            "label": "Produce",
+            "type": "produce_section",
+            "position": {
+                "x": 5,
+                "y": 28
+            },
+            "dimensions": {
+                "width": 8,
+                "height": 6
+            },
+            "category": "Fresh Produce"
+        },
+        {
+            "id": "deli",
+            "label": "Deli",
+            "type": "deli_section",
+            "position": {
+                "x": 18,
+                "y": 28
+            },
+            "dimensions": {
+                "width": 8,
+                "height": 6
+            },
+            "category": "Deli & Meats"
+        },
+        {
+            "id": "bakery",
+            "label": "Bakery",
+            "type": "bakery_section",
+            "position": {
+                "x": 31,
+                "y": 28
+            },
+            "dimensions": {
+                "width": 8,
+                "height": 6
+            },
+            "category": "Bakery"
+        }
+    ],
+    "checkouts": [
+        {
+            "id": "checkout_1",
+            "position": {
+                "x": 8,
+                "y": 36
+            },
+            "dimensions": {
+                "width": 2,
+                "height": 3
+            }
+        },
+        {
+            "id": "checkout_2",
+            "position": {
+                "x": 12,
+                "y": 36
+            },
+            "dimensions": {
+                "width": 2,
+                "height": 3
+            }
+        },
+        {
+            "id": "checkout_3",
+            "position": {
+                "x": 16,
+                "y": 36
+            },
+            "dimensions": {
+                "width": 2,
+                "height": 3
+            }
+        }
+    ],
+    "walkways": [
+        {
+            "id": "main_corridor",
+            "type": "horizontal",
+            "position": {
+                "x": 0,
+                "y": 5
+            },
+            "dimensions": {
+                "width": 60,
+                "height": 2
+            }
+        },
+        {
+            "id": "perimeter_top",
+            "type": "horizontal",
+            "position": {
+                "x": 0,
+                "y": 0
+            },
+            "dimensions": {
+                "width": 60,
+                "height": 4
+            }
+        }
+    ],
+    "entry_exit": [
+        {
+            "id": "entrance",
+            "type": "entrance",
+            "position": {
+                "x": 28,
+                "y": 1
+            },
+            "dimensions": {
+                "width": 4,
+                "height": 2
+            }
+        },
+        {
+            "id": "exit",
+            "type": "exit",
+            "position": {
+                "x": 52,
+                "y": 37
+            },
+            "dimensions": {
+                "width": 4,
+                "height": 2
+            }
+        }
+    ]
+}
