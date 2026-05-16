@@ -159,6 +159,46 @@ export interface Product {
   location: ProductLocation;
   price?: number;
   barcode?: string;
+  keywords?: string[]; // Additional searchable keywords
+}
+
+// ============================================================================
+// Product Search Types
+// ============================================================================
+
+/**
+ * Options for product search
+ */
+export interface SearchOptions {
+  threshold?: number; // Fuse.js threshold (0.0 = exact, 1.0 = match anything)
+  limit?: number; // Maximum number of results to return
+  includeScore?: boolean; // Include relevance score in results
+  searchFields?: string[]; // Specific fields to search in
+}
+
+/**
+ * Search result with product and relevance information
+ */
+export interface SearchResult {
+  product: Product;
+  score: number; // Relevance score (0-1, lower is better)
+  matches?: SearchMatch[]; // What matched in the search
+}
+
+/**
+ * Information about what matched in a search
+ */
+export interface SearchMatch {
+  field: string; // Which field matched (name, category, keywords)
+  value: string; // The matched value
+  indices?: number[][]; // Character positions that matched
+}
+
+/**
+ * Synonym mapping for product search
+ */
+export interface SynonymMap {
+  [key: string]: string[]; // "coke" -> ["coca-cola", "coca cola", "coke"]
 }
 
 // ============================================================================

@@ -24,6 +24,10 @@ export type {
   NavigationRequest,
   NavigationResult,
   GridConfig,
+  SearchOptions,
+  SearchResult,
+  SearchMatch,
+  SynonymMap,
 } from './types';
 
 // Export utility functions
@@ -58,5 +62,28 @@ export type { PathfindingOptions } from './pathfinding';
 
 // Export default pathfinding API
 export { default as pathfinding } from './pathfinding';
+
+// Export search functions
+export {
+  searchProducts,
+  normalizeQuery,
+  rankResults,
+  searchByCategory,
+  getProductSuggestions,
+  searchByBarcode,
+  getCategories,
+  filterByPriceRange,
+  searchWithFilters,
+} from './search';
+
+// Export default search API
+export { default as search } from './search';
+
+// Export synonym functions
+export {
+  PRODUCT_SYNONYMS,
+  expandQueryWithSynonyms,
+  getProductVariations,
+} from './synonyms';
 
 // Made with Bob
