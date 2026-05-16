@@ -343,6 +343,8 @@ export function createGridFromLayout(layout: StoreLayout): Grid {
       if (
         Number.isInteger(entranceX) &&
         Number.isInteger(entranceY) &&
+        entranceX >= 0 &&
+        entranceY >= 0 &&
         isInBounds({ x: entranceX, y: entranceY }, width, height)
       ) {
         grid[entranceY][entranceX] = true;
