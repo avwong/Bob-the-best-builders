@@ -21,6 +21,12 @@ interface GridCanvasProps {
     onPlaceElement: (tool: EditorState["selectedTool"], position: Position) => void
     zoom: number
     onZoomChange: (zoom: number) => void
+    // Navigate mode
+    mode?: "edit" | "navigate"
+    routePath?: Position[]
+    routeStart?: Position | null
+    routeEnd?: Position | null
+    onNavigateClick?: (pos: Position) => void
 }
 
 export function GridCanvas({
@@ -41,6 +47,11 @@ export function GridCanvas({
     onPlaceElement,
     zoom,
     onZoomChange,
+    mode = "edit",
+    routePath = [],
+    routeStart = null,
+    routeEnd = null,
+    onNavigateClick,
 }: GridCanvasProps) {
     const svgRef = useRef<SVGSVGElement>(null)
     const [isDragging, setIsDragging] = useState(false)
@@ -112,6 +123,14 @@ export function GridCanvas({
     }, [handleWheel])
 
     const handleMouseDown = (e: React.MouseEvent, elementId?: string) => {
+        if (mode === "navigate") {
+            // In navigate mode all element clicks are treated as canvas clicks
+            e.stopPropagation()
+            const svgPoint = getSVGPoint(e)
+            onNavigateClick?.(svgPoint)
+            return
+        }
+
         if (elementId && selectedTool === "select") {
             // Start dragging an element
             e.stopPropagation()
@@ -137,6 +156,11 @@ export function GridCanvas({
     }
 
     const handleCanvasClick = (e: React.MouseEvent) => {
+        if (mode === "navigate") {
+            const svgPoint = getSVGPoint(e)
+            onNavigateClick?.(svgPoint)
+            return
+        }
         if (selectedTool !== "select" && !isDragging && !isPanning) {
             const svgPoint = getSVGPoint(e)
             const snappedPosition = snapPosition(svgPoint)
@@ -200,6 +224,84 @@ export function GridCanvas({
             }
         }
     }, [isDragging, isPanning, handleMouseMove, handleMouseUp])
+
+    const renderPath = () => {
+        if (routePath.length < 2 && !routeStart && !routeEnd) return null
+
+        const polylinePoints = routePath
+            .map((p) => `${p.x + 0.5},${p.y + 0.5}`)
+            .join(" ")
+
+        return (
+            <g>
+                {/* Path line */}
+                {routePath.length >= 2 && (
+                    <polyline
+                        points={polylinePoints}
+                        fill="none"
+                        stroke="#3b82f6"
+                        strokeWidth={0.25}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeDasharray="0.5 0.25"
+                        opacity={0.85}
+                    />
+                )}
+
+                {/* Start marker (green) */}
+                {routeStart && (
+                    <g>
+                        <circle
+                            cx={routeStart.x + 0.5}
+                            cy={routeStart.y + 0.5}
+                            r={0.55}
+                            fill="#10b981"
+                            stroke="#fff"
+                            strokeWidth={0.12}
+                        />
+                        <text
+                            x={routeStart.x + 0.5}
+                            y={routeStart.y + 0.5}
+                            textAnchor="middle"
+                            dominantBaseline="middle"
+                            fontSize={0.5}
+                            fontWeight="bold"
+                            fill="#fff"
+                            pointerEvents="none"
+                        >
+                            S
+                        </text>
+                    </g>
+                )}
+
+                {/* End marker (red) */}
+                {routeEnd && (
+                    <g>
+                        <circle
+                            cx={routeEnd.x + 0.5}
+                            cy={routeEnd.y + 0.5}
+                            r={0.55}
+                            fill="#ef4444"
+                            stroke="#fff"
+                            strokeWidth={0.12}
+                        />
+                        <text
+                            x={routeEnd.x + 0.5}
+                            y={routeEnd.y + 0.5}
+                            textAnchor="middle"
+                            dominantBaseline="middle"
+                            fontSize={0.5}
+                            fontWeight="bold"
+                            fill="#fff"
+                            pointerEvents="none"
+                        >
+                            E
+                        </text>
+                    </g>
+                )}
+            </g>
+        )
+    }
 
     const renderGrid = () => {
         if (!showGrid) return null
@@ -416,7 +518,15 @@ export function GridCanvas({
             className="relative w-full h-full overflow-hidden"
             onDragOver={handleDragOver}
             onDrop={handleDrop}
-            style={{ cursor: isPanning ? "grabbing" : selectedTool !== "select" ? "crosshair" : "default" }}
+            style={{
+                cursor: mode === "navigate"
+                    ? "crosshair"
+                    : isPanning
+                    ? "grabbing"
+                    : selectedTool !== "select"
+                    ? "crosshair"
+                    : "default",
+            }}
         >
             <svg
                 ref={svgRef}
@@ -426,6 +536,11 @@ export function GridCanvas({
                 viewBox={viewBox}
                 preserveAspectRatio="xMidYMid meet"
                 onMouseDown={(e) => {
+                    if (mode === "navigate") {
+                        const svgPoint = getSVGPoint(e)
+                        onNavigateClick?.(svgPoint)
+                        return
+                    }
                     const target = e.target as SVGElement
                     // If clicking on background or SVG itself
                     if (target === e.currentTarget || target.getAttribute("data-bg") === "true") {
@@ -437,7 +552,15 @@ export function GridCanvas({
                         }
                     }
                 }}
-                style={{ cursor: isPanning ? "grabbing" : selectedTool !== "select" ? "crosshair" : "default" }}
+                style={{
+                    cursor: mode === "navigate"
+                        ? "crosshair"
+                        : isPanning
+                        ? "grabbing"
+                        : selectedTool !== "select"
+                        ? "crosshair"
+                        : "default",
+                }}
             >
                 {/* Full background — clickable for deselect/place */}
                 <rect
@@ -464,26 +587,25 @@ export function GridCanvas({
                 {/* Grid */}
                 {renderGrid()}
 
-                {/* Shelves */}
-                {shelves.map(renderShelf)}
+                {/* Store elements — pointer-events disabled in navigate mode */}
+                <g style={{ pointerEvents: mode === "navigate" ? "none" : "auto" }}>
+                    {shelves.map(renderShelf)}
+                    {specialZones.map(renderSpecialZone)}
+                    {checkouts.map(renderCheckout)}
+                    {entryExit.map(renderEntryExit)}
+                    {walls.map(renderWall)}
+                </g>
 
-                {/* Special Zones */}
-                {specialZones.map(renderSpecialZone)}
-
-                {/* Checkouts */}
-                {checkouts.map(renderCheckout)}
-
-                {/* Entry/Exit points */}
-                {entryExit.map(renderEntryExit)}
-
-                {/* Walls */}
-                {walls.map(renderWall)}
+                {/* Pathfinding overlay */}
+                {renderPath()}
             </svg>
 
             {/* Instructions overlay */}
             <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-lg shadow-lg text-xs text-gray-600">
                 <p><strong>Scroll:</strong> Zoom</p>
-                {selectedTool === "select" ? (
+                {mode === "navigate" ? (
+                    <p><strong>Click map:</strong> Set destination</p>
+                ) : selectedTool === "select" ? (
                     <>
                         <p><strong>Click + Drag bg:</strong> Pan canvas</p>
                         <p><strong>Click element:</strong> Select & drag</p>
