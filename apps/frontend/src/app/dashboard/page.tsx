@@ -9,8 +9,8 @@ import { Plus, Settings, FileJson, Layout } from "lucide-react"
 export default function Dashboard() {
     const router = useRouter()
     const [recentLayouts] = useState([
-        { id: "1", name: "Main Store Layout", lastModified: "2026-05-16", aisles: 12 },
-        { id: "2", name: "Express Store", lastModified: "2026-05-15", aisles: 6 },
+        { id: "1", name: "Main Store Layout", lastModified: "2026-05-16", shelves: 12 },
+        { id: "2", name: "Express Store", lastModified: "2026-05-15", shelves: 6 },
     ])
 
     return (
@@ -28,7 +28,7 @@ export default function Dashboard() {
 
                 {/* Quick Actions */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-transparent hover:border-blue-500">
+                    <Card className="hover:shadow-lg transition-shadow border-2 border-transparent hover:border-blue-500">
                         <CardHeader>
                             <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
                                 <Plus className="w-6 h-6 text-white" />
@@ -48,7 +48,7 @@ export default function Dashboard() {
                         </CardContent>
                     </Card>
 
-                    <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-transparent hover:border-green-500">
+                    <Card className="hover:shadow-lg transition-shadow border-2 border-transparent hover:border-green-500">
                         <CardHeader>
                             <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-4">
                                 <FileJson className="w-6 h-6 text-white" />
@@ -62,7 +62,8 @@ export default function Dashboard() {
                             <Button
                                 variant="outline"
                                 className="w-full"
-                                onClick={() => {
+                                onClick={(e) => {
+                                    e.stopPropagation()
                                     const input = document.createElement('input')
                                     input.type = 'file'
                                     input.accept = '.json'
@@ -86,7 +87,7 @@ export default function Dashboard() {
                         </CardContent>
                     </Card>
 
-                    <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-transparent hover:border-purple-500">
+                    <Card className="hover:shadow-lg transition-shadow border-2 border-transparent hover:border-purple-500">
                         <CardHeader>
                             <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mb-4">
                                 <Settings className="w-6 h-6 text-white" />
@@ -130,16 +131,22 @@ export default function Dashboard() {
                                 {recentLayouts.map((layout) => (
                                     <div
                                         key={layout.id}
-                                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                                        onClick={() => router.push("/editor")}
+                                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
                                     >
-                                        <div>
+                                        <div className="cursor-pointer flex-1" onClick={() => router.push("/editor")}>
                                             <h3 className="font-semibold text-gray-900">{layout.name}</h3>
                                             <p className="text-sm text-gray-500">
-                                                {layout.aisles} aisles • Last modified: {layout.lastModified}
+                                                {layout.shelves} shelves • Last modified: {layout.lastModified}
                                             </p>
                                         </div>
-                                        <Button variant="outline" size="sm">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                router.push("/editor")
+                                            }}
+                                        >
                                             Open
                                         </Button>
                                     </div>
@@ -155,7 +162,7 @@ export default function Dashboard() {
                         <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <Layout className="w-8 h-8 text-blue-600" />
                         </div>
-                        <h3 className="font-semibold mb-2">Drag & Drop</h3>
+                        <h3 className="font-semibold mb-2 text-gray-900">Drag & Drop</h3>
                         <p className="text-sm text-gray-600">
                             Intuitive interface for creating layouts
                         </p>
@@ -164,7 +171,7 @@ export default function Dashboard() {
                         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <FileJson className="w-8 h-8 text-green-600" />
                         </div>
-                        <h3 className="font-semibold mb-2">Export & Import</h3>
+                        <h3 className="font-semibold mb-2 text-gray-900">Export & Import</h3>
                         <p className="text-sm text-gray-600">
                             Save and share your layouts as JSON
                         </p>
@@ -173,7 +180,7 @@ export default function Dashboard() {
                         <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <Settings className="w-8 h-8 text-purple-600" />
                         </div>
-                        <h3 className="font-semibold mb-2">Customizable</h3>
+                        <h3 className="font-semibold mb-2 text-gray-900">Customizable</h3>
                         <p className="text-sm text-gray-600">
                             Adapt colors to match your brand
                         </p>

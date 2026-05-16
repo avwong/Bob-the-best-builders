@@ -13,7 +13,7 @@ export interface GridCell {
     y: number;
     walkable: boolean;
     occupied: boolean;
-    type?: 'shelf' | 'walkway' | 'zone' | 'checkout' | 'entrance' | 'exit' | 'wall';
+    type?: 'shelf' | 'freezer' | 'zone' | 'checkout' | 'entrance' | 'exit' | 'wall';
 }
 
 export interface Shelf {
@@ -32,6 +32,16 @@ export interface Shelf {
             sections: ('top' | 'middle' | 'bottom')[];
         };
     };
+}
+
+export interface Freezer {
+    id: string;
+    label: string;
+    type: 'freezer';
+    position: Position;
+    dimensions: Dimensions;
+    orientation: 'vertical' | 'horizontal';
+    category: string;
 }
 
 export interface SpecialZone {
@@ -75,6 +85,7 @@ export interface StoreLayout {
         walkable_paths: string[];
     };
     shelves: Shelf[];
+    freezers: Freezer[];
     special_zones: SpecialZone[];
     checkouts: Checkout[];
     entry_exit: EntryExit[];
@@ -87,7 +98,7 @@ export interface Product {
     barcode?: string;
     category: string;
     location: {
-        zone_type: 'shelf' | 'special_zone';
+        zone_type: 'shelf' | 'freezer' | 'special_zone';
         zone_id: string;
         shelf_side?: 'left' | 'right';
         shelf_section?: 'top' | 'middle' | 'bottom';
@@ -99,7 +110,7 @@ export interface Product {
 }
 
 export interface EditorState {
-    selectedTool: 'select' | 'shelf' | 'zone' | 'checkout' | 'entrance' | 'exit' | 'wall';
+    selectedTool: 'select' | 'shelf' | 'freezer' | 'zone' | 'checkout' | 'entrance' | 'exit' | 'wall';
     selectedElement: string | null;
     gridSize: number;
     snapToGrid: boolean;

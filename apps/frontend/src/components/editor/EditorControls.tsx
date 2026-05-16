@@ -11,33 +11,46 @@ import { EditorState } from "@/types/supermarket"
 interface EditorControlsProps {
     editorState: EditorState
     mode: "edit" | "navigate"
+    storeWidth: number
+    storeHeight: number
     onUpdateState: (state: Partial<EditorState>) => void
     onAddShelf: () => void
     onAddZone: () => void
     onSave: () => void
     onExport: () => void
     onToggleMode: () => void
+    onUpdateStoreDimensions: (width: number, height: number) => void
 }
 
 export function EditorControls({
     editorState,
     mode,
+    storeWidth,
+    storeHeight,
     onUpdateState,
     onAddShelf,
     onAddZone,
     onSave,
     onExport,
     onToggleMode,
+    onUpdateStoreDimensions,
 }: EditorControlsProps) {
     const tools = [
         { id: "select", label: "Select", icon: "🖱️" },
         { id: "shelf", label: "Shelf", icon: "🗄️" },
+        { id: "freezer", label: "Freezer", icon: "❄️" },
         { id: "zone", label: "Zone", icon: "🏪" },
         { id: "checkout", label: "Checkout", icon: "💳" },
         { id: "entrance", label: "Entrance", icon: "🚪" },
         { id: "exit", label: "Exit", icon: "🚪" },
         { id: "wall", label: "Wall", icon: "🧱" },
     ] as const
+
+    const gridPresets = [
+        { label: "1m", value: 1 },
+        { label: "2m", value: 2 },
+        { label: "5m", value: 5 },
+    ]
 
     return (
         <div className="w-80 h-full overflow-y-auto bg-white border-r border-gray-200 p-4 space-y-4">
@@ -91,7 +104,7 @@ export function EditorControls({
                     {/* Tools */}
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-lg">Tools</CardTitle>
+                            <CardTitle className="text-lg text-gray-900">Tools</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
                             <div className="grid grid-cols-2 gap-2">
@@ -126,7 +139,7 @@ export function EditorControls({
                     {/* Quick Actions */}
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-lg">Quick Actions</CardTitle>
+                            <CardTitle className="text-lg text-gray-900">Quick Actions</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
                             <Button onClick={onAddShelf} variant="outline" size="sm" className="w-full justify-start">
@@ -142,22 +155,62 @@ export function EditorControls({
 
                     <Separator />
 
+                    {/* Store Dimensions */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-lg text-gray-900">Store Size</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                            <div className="grid grid-cols-2 gap-2">
+                                <div className="space-y-1">
+                                    <Label htmlFor="store-width" className="text-xs text-gray-600">Width (m)</Label>
+                                    <Input
+                                        id="store-width"
+                                        type="number"
+                                        value={storeWidth}
+                                        onChange={(e) => onUpdateStoreDimensions(Number(e.target.value), storeHeight)}
+                                        min={10}
+                                        max={200}
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <Label htmlFor="store-height" className="text-xs text-gray-600">Height (m)</Label>
+                                    <Input
+                                        id="store-height"
+                                        type="number"
+                                        value={storeHeight}
+                                        onChange={(e) => onUpdateStoreDimensions(storeWidth, Number(e.target.value))}
+                                        min={10}
+                                        max={200}
+                                    />
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Separator />
+
                     {/* Grid Settings */}
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-lg">Grid Settings</CardTitle>
+                            <CardTitle className="text-lg text-gray-900">Grid Settings</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="gridSize">Grid Size (meters)</Label>
-                                <Input
-                                    id="gridSize"
-                                    type="number"
-                                    value={editorState.gridSize}
-                                    onChange={(e) => onUpdateState({ gridSize: Number(e.target.value) })}
-                                    min={1}
-                                    max={10}
-                                />
+                                <Label className="text-gray-600">Grid Size</Label>
+                                <div className="flex gap-2">
+                                    {gridPresets.map((preset) => (
+                                        <Button
+                                            key={preset.value}
+                                            variant={editorState.gridSize === preset.value ? "default" : "outline"}
+                                            size="sm"
+                                            className="flex-1"
+                                            onClick={() => onUpdateState({ gridSize: preset.value })}
+                                        >
+                                            {preset.label}
+                                        </Button>
+                                    ))}
+                                </div>
                             </div>
 
                             <div className="flex items-center space-x-2">
@@ -168,7 +221,7 @@ export function EditorControls({
                                     onChange={(e) => onUpdateState({ showGrid: e.target.checked })}
                                     className="h-4 w-4 rounded border-gray-300"
                                 />
-                                <Label htmlFor="showGrid" className="cursor-pointer">
+                                <Label htmlFor="showGrid" className="cursor-pointer text-gray-700">
                                     Show Grid
                                 </Label>
                             </div>
@@ -181,7 +234,7 @@ export function EditorControls({
                                     onChange={(e) => onUpdateState({ snapToGrid: e.target.checked })}
                                     className="h-4 w-4 rounded border-gray-300"
                                 />
-                                <Label htmlFor="snapToGrid" className="cursor-pointer">
+                                <Label htmlFor="snapToGrid" className="cursor-pointer text-gray-700">
                                     Snap to Grid
                                 </Label>
                             </div>
@@ -193,12 +246,12 @@ export function EditorControls({
                     {/* Zoom */}
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-lg">View</CardTitle>
+                            <CardTitle className="text-lg text-gray-900">View</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2">
                             <div className="flex items-center justify-between">
-                                <Label>Zoom</Label>
-                                <span className="text-sm text-muted-foreground">
+                                <Label className="text-gray-700">Zoom</Label>
+                                <span className="text-sm text-gray-500">
                                     {Math.round(editorState.zoom * 100)}%
                                 </span>
                             </div>
