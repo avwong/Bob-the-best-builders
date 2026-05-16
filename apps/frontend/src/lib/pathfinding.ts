@@ -337,8 +337,15 @@ export function createGridFromLayout(layout: StoreLayout): Grid {
   // Mark aisle entrances as walkable
   for (const aisle of layout.aisles) {
     for (const entrance of aisle.entrances) {
-      if (isInBounds(entrance, width, height)) {
-        grid[entrance.y][entrance.x] = true;
+      const entranceX = Number(entrance.x);
+      const entranceY = Number(entrance.y);
+
+      if (
+        Number.isInteger(entranceX) &&
+        Number.isInteger(entranceY) &&
+        isInBounds({ x: entranceX, y: entranceY }, width, height)
+      ) {
+        grid[entranceY][entranceX] = true;
       }
     }
   }
