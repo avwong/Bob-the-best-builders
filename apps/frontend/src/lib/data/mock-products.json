@@ -1,0 +1,702 @@
+{
+  "products": [
+    {
+      "id": "prod-001",
+      "name": "Coca-Cola Classic 2L",
+      "category": "Beverages",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "A",
+        "shelf_side": "left",
+        "shelf_section": "middle",
+        "coordinates": { "x": 5, "y": 10 }
+      },
+      "price": 2.99,
+      "barcode": "049000042566",
+      "keywords": ["soda", "soft drink", "cola", "coke", "carbonated"]
+    },
+    {
+      "id": "prod-002",
+      "name": "Pepsi Cola 2L",
+      "category": "Beverages",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "A",
+        "shelf_side": "left",
+        "shelf_section": "middle",
+        "coordinates": { "x": 5, "y": 12 }
+      },
+      "price": 2.79,
+      "barcode": "012000001659",
+      "keywords": ["soda", "soft drink", "cola", "pepsi", "carbonated"]
+    },
+    {
+      "id": "prod-003",
+      "name": "Sprite Lemon-Lime 2L",
+      "category": "Beverages",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "A",
+        "shelf_side": "left",
+        "shelf_section": "middle",
+        "coordinates": { "x": 5, "y": 14 }
+      },
+      "price": 2.49,
+      "barcode": "049000028904",
+      "keywords": ["soda", "soft drink", "lemon", "lime", "sprite"]
+    },
+    {
+      "id": "prod-004",
+      "name": "Whole Milk 1 Gallon",
+      "category": "Dairy",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "dairy",
+        "coordinates": { "x": 25, "y": 5 }
+      },
+      "price": 4.29,
+      "barcode": "041303001806",
+      "keywords": ["milk", "dairy", "whole", "gallon"]
+    },
+    {
+      "id": "prod-005",
+      "name": "2% Reduced Fat Milk 1 Gallon",
+      "category": "Dairy",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "dairy",
+        "coordinates": { "x": 25, "y": 7 }
+      },
+      "price": 3.99,
+      "barcode": "041303001813",
+      "keywords": ["milk", "dairy", "low-fat", "2%", "gallon"]
+    },
+    {
+      "id": "prod-006",
+      "name": "Cheddar Cheese Block 8oz",
+      "category": "Dairy",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "dairy",
+        "coordinates": { "x": 26, "y": 8 }
+      },
+      "price": 3.49,
+      "barcode": "021000658237",
+      "keywords": ["cheese", "cheddar", "dairy", "block"]
+    },
+    {
+      "id": "prod-007",
+      "name": "Greek Yogurt Vanilla 32oz",
+      "category": "Dairy",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "dairy",
+        "coordinates": { "x": 26, "y": 10 }
+      },
+      "price": 5.99,
+      "barcode": "052159401016",
+      "keywords": ["yogurt", "yoghurt", "greek", "vanilla", "dairy"]
+    },
+    {
+      "id": "prod-008",
+      "name": "Red Delicious Apples 3lb Bag",
+      "category": "Produce",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "produce",
+        "coordinates": { "x": 2, "y": 5 }
+      },
+      "price": 4.99,
+      "barcode": "033383409016",
+      "keywords": ["apple", "apples", "red", "fruit", "produce"]
+    },
+    {
+      "id": "prod-009",
+      "name": "Bananas per lb",
+      "category": "Produce",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "produce",
+        "coordinates": { "x": 2, "y": 7 }
+      },
+      "price": 0.59,
+      "barcode": "033383409023",
+      "keywords": ["banana", "bananas", "fruit", "produce"]
+    },
+    {
+      "id": "prod-010",
+      "name": "Roma Tomatoes per lb",
+      "category": "Produce",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "produce",
+        "coordinates": { "x": 3, "y": 8 }
+      },
+      "price": 1.99,
+      "barcode": "033383409030",
+      "keywords": ["tomato", "tomatoes", "roma", "vegetable", "produce"]
+    },
+    {
+      "id": "prod-011",
+      "name": "Russet Potatoes 5lb Bag",
+      "category": "Produce",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "produce",
+        "coordinates": { "x": 3, "y": 10 }
+      },
+      "price": 3.99,
+      "barcode": "033383409047",
+      "keywords": ["potato", "potatoes", "russet", "vegetable", "produce"]
+    },
+    {
+      "id": "prod-012",
+      "name": "White Bread Loaf",
+      "category": "Bakery",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "bakery",
+        "coordinates": { "x": 28, "y": 15 }
+      },
+      "price": 2.49,
+      "barcode": "007287400012",
+      "keywords": ["bread", "white", "loaf", "bakery"]
+    },
+    {
+      "id": "prod-013",
+      "name": "Whole Wheat Bread Loaf",
+      "category": "Bakery",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "bakery",
+        "coordinates": { "x": 28, "y": 17 }
+      },
+      "price": 2.99,
+      "barcode": "007287400029",
+      "keywords": ["bread", "wheat", "whole grain", "loaf", "bakery"]
+    },
+    {
+      "id": "prod-014",
+      "name": "Plain Bagels 6 Pack",
+      "category": "Bakery",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "bakery",
+        "coordinates": { "x": 29, "y": 16 }
+      },
+      "price": 3.49,
+      "barcode": "007287400036",
+      "keywords": ["bagel", "bagels", "plain", "bakery"]
+    },
+    {
+      "id": "prod-015",
+      "name": "Chocolate Chip Cookies 12oz",
+      "category": "Bakery",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "bakery",
+        "coordinates": { "x": 29, "y": 18 }
+      },
+      "price": 4.99,
+      "barcode": "007287400043",
+      "keywords": ["cookies", "chocolate chip", "bakery", "dessert"]
+    },
+    {
+      "id": "prod-016",
+      "name": "Chicken Breast Boneless Skinless per lb",
+      "category": "Meat",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "meat",
+        "coordinates": { "x": 20, "y": 20 }
+      },
+      "price": 5.99,
+      "barcode": "021130080014",
+      "keywords": ["chicken", "breast", "meat", "poultry", "protein"]
+    },
+    {
+      "id": "prod-017",
+      "name": "Ground Beef 80/20 per lb",
+      "category": "Meat",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "meat",
+        "coordinates": { "x": 20, "y": 22 }
+      },
+      "price": 4.99,
+      "barcode": "021130080021",
+      "keywords": ["beef", "ground", "meat", "hamburger"]
+    },
+    {
+      "id": "prod-018",
+      "name": "Bacon Thick Cut 16oz",
+      "category": "Meat",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "meat",
+        "coordinates": { "x": 21, "y": 21 }
+      },
+      "price": 6.99,
+      "barcode": "021130080038",
+      "keywords": ["bacon", "pork", "meat", "breakfast"]
+    },
+    {
+      "id": "prod-019",
+      "name": "Large Eggs Grade A Dozen",
+      "category": "Dairy",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "dairy",
+        "coordinates": { "x": 25, "y": 12 }
+      },
+      "price": 3.99,
+      "barcode": "041303001820",
+      "keywords": ["eggs", "egg", "dozen", "dairy", "protein"]
+    },
+    {
+      "id": "prod-020",
+      "name": "Potato Chips Original 10oz",
+      "category": "Snacks",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "C",
+        "shelf_side": "right",
+        "shelf_section": "middle",
+        "coordinates": { "x": 12, "y": 8 }
+      },
+      "price": 3.99,
+      "barcode": "028400047364",
+      "keywords": ["chips", "potato", "snack", "crisps"]
+    },
+    {
+      "id": "prod-021",
+      "name": "Tortilla Chips 13oz",
+      "category": "Snacks",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "C",
+        "shelf_side": "right",
+        "shelf_section": "middle",
+        "coordinates": { "x": 12, "y": 10 }
+      },
+      "price": 3.49,
+      "barcode": "028400047371",
+      "keywords": ["chips", "tortilla", "snack", "corn"]
+    },
+    {
+      "id": "prod-022",
+      "name": "Chocolate Candy Bar 6 Pack",
+      "category": "Snacks",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "C",
+        "shelf_side": "left",
+        "shelf_section": "top",
+        "coordinates": { "x": 11, "y": 9 }
+      },
+      "price": 5.99,
+      "barcode": "040000518464",
+      "keywords": ["candy", "chocolate", "snack", "sweet"]
+    },
+    {
+      "id": "prod-023",
+      "name": "Mixed Nuts 16oz",
+      "category": "Snacks",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "C",
+        "shelf_side": "left",
+        "shelf_section": "middle",
+        "coordinates": { "x": 11, "y": 11 }
+      },
+      "price": 7.99,
+      "barcode": "041303001837",
+      "keywords": ["nuts", "mixed", "snack", "protein"]
+    },
+    {
+      "id": "prod-024",
+      "name": "Vanilla Ice Cream 1.5 Quart",
+      "category": "Frozen",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "F",
+        "shelf_side": "left",
+        "shelf_section": "bottom",
+        "coordinates": { "x": 18, "y": 5 }
+      },
+      "price": 4.99,
+      "barcode": "070640002016",
+      "keywords": ["ice cream", "frozen", "dessert", "vanilla"]
+    },
+    {
+      "id": "prod-025",
+      "name": "Frozen Pizza Pepperoni",
+      "category": "Frozen",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "F",
+        "shelf_side": "right",
+        "shelf_section": "middle",
+        "coordinates": { "x": 19, "y": 7 }
+      },
+      "price": 5.99,
+      "barcode": "071921002015",
+      "keywords": ["pizza", "frozen", "pepperoni", "meal"]
+    },
+    {
+      "id": "prod-026",
+      "name": "Frozen Mixed Vegetables 16oz",
+      "category": "Frozen",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "F",
+        "shelf_side": "right",
+        "shelf_section": "middle",
+        "coordinates": { "x": 19, "y": 9 }
+      },
+      "price": 2.49,
+      "barcode": "041303001844",
+      "keywords": ["vegetables", "frozen", "mixed", "veggies"]
+    },
+    {
+      "id": "prod-027",
+      "name": "Spaghetti Pasta 16oz",
+      "category": "Pantry",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "B",
+        "shelf_side": "left",
+        "shelf_section": "middle",
+        "coordinates": { "x": 8, "y": 12 }
+      },
+      "price": 1.99,
+      "barcode": "076808501216",
+      "keywords": ["pasta", "spaghetti", "noodles", "italian"]
+    },
+    {
+      "id": "prod-028",
+      "name": "White Rice 2lb",
+      "category": "Pantry",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "B",
+        "shelf_side": "left",
+        "shelf_section": "bottom",
+        "coordinates": { "x": 8, "y": 14 }
+      },
+      "price": 3.49,
+      "barcode": "041303001851",
+      "keywords": ["rice", "white", "grain", "pantry"]
+    },
+    {
+      "id": "prod-029",
+      "name": "Corn Flakes Cereal 18oz",
+      "category": "Pantry",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "D",
+        "shelf_side": "right",
+        "shelf_section": "top",
+        "coordinates": { "x": 15, "y": 6 }
+      },
+      "price": 4.49,
+      "barcode": "038000045301",
+      "keywords": ["cereal", "corn flakes", "breakfast", "pantry"]
+    },
+    {
+      "id": "prod-030",
+      "name": "Olive Oil Extra Virgin 16oz",
+      "category": "Pantry",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "B",
+        "shelf_side": "right",
+        "shelf_section": "middle",
+        "coordinates": { "x": 9, "y": 13 }
+      },
+      "price": 7.99,
+      "barcode": "041303001868",
+      "keywords": ["oil", "olive", "cooking", "pantry"]
+    },
+    {
+      "id": "prod-031",
+      "name": "Granulated Sugar 4lb",
+      "category": "Pantry",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "B",
+        "shelf_side": "right",
+        "shelf_section": "bottom",
+        "coordinates": { "x": 9, "y": 15 }
+      },
+      "price": 3.99,
+      "barcode": "041303001875",
+      "keywords": ["sugar", "white", "granulated", "baking"]
+    },
+    {
+      "id": "prod-032",
+      "name": "All-Purpose Flour 5lb",
+      "category": "Pantry",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "B",
+        "shelf_side": "left",
+        "shelf_section": "bottom",
+        "coordinates": { "x": 8, "y": 16 }
+      },
+      "price": 4.49,
+      "barcode": "041303001882",
+      "keywords": ["flour", "all-purpose", "baking", "pantry"]
+    },
+    {
+      "id": "prod-033",
+      "name": "Orange Juice 64oz",
+      "category": "Beverages",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "dairy",
+        "coordinates": { "x": 24, "y": 6 }
+      },
+      "price": 4.99,
+      "barcode": "025000001031",
+      "keywords": ["juice", "orange", "beverage", "fruit"]
+    },
+    {
+      "id": "prod-034",
+      "name": "Bottled Water 24 Pack",
+      "category": "Beverages",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "A",
+        "shelf_side": "right",
+        "shelf_section": "bottom",
+        "coordinates": { "x": 6, "y": 11 }
+      },
+      "price": 5.99,
+      "barcode": "012000638237",
+      "keywords": ["water", "bottled", "beverage", "hydration"]
+    },
+    {
+      "id": "prod-035",
+      "name": "Ground Coffee 12oz",
+      "category": "Beverages",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "D",
+        "shelf_side": "left",
+        "shelf_section": "middle",
+        "coordinates": { "x": 14, "y": 8 }
+      },
+      "price": 8.99,
+      "barcode": "043000953501",
+      "keywords": ["coffee", "ground", "beverage", "caffeine"]
+    },
+    {
+      "id": "prod-036",
+      "name": "Black Tea Bags 100 Count",
+      "category": "Beverages",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "D",
+        "shelf_side": "left",
+        "shelf_section": "middle",
+        "coordinates": { "x": 14, "y": 10 }
+      },
+      "price": 5.49,
+      "barcode": "041303001899",
+      "keywords": ["tea", "black", "beverage", "bags"]
+    },
+    {
+      "id": "prod-037",
+      "name": "Mozzarella Cheese Shredded 8oz",
+      "category": "Dairy",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "dairy",
+        "coordinates": { "x": 26, "y": 9 }
+      },
+      "price": 3.99,
+      "barcode": "021000658244",
+      "keywords": ["cheese", "mozzarella", "shredded", "dairy"]
+    },
+    {
+      "id": "prod-038",
+      "name": "Butter Salted 16oz",
+      "category": "Dairy",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "dairy",
+        "coordinates": { "x": 25, "y": 9 }
+      },
+      "price": 4.99,
+      "barcode": "041303001905",
+      "keywords": ["butter", "salted", "dairy", "spread"]
+    },
+    {
+      "id": "prod-039",
+      "name": "Iceberg Lettuce Head",
+      "category": "Produce",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "produce",
+        "coordinates": { "x": 2, "y": 9 }
+      },
+      "price": 1.99,
+      "barcode": "033383409054",
+      "keywords": ["lettuce", "iceberg", "salad", "produce", "vegetable"]
+    },
+    {
+      "id": "prod-040",
+      "name": "Baby Carrots 1lb Bag",
+      "category": "Produce",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "produce",
+        "coordinates": { "x": 3, "y": 9 }
+      },
+      "price": 1.49,
+      "barcode": "033383409061",
+      "keywords": ["carrot", "carrots", "baby", "produce", "vegetable"]
+    },
+    {
+      "id": "prod-041",
+      "name": "Yellow Onions 3lb Bag",
+      "category": "Produce",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "produce",
+        "coordinates": { "x": 3, "y": 11 }
+      },
+      "price": 2.99,
+      "barcode": "033383409078",
+      "keywords": ["onion", "onions", "yellow", "produce", "vegetable"]
+    },
+    {
+      "id": "prod-042",
+      "name": "Blueberry Muffins 4 Pack",
+      "category": "Bakery",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "bakery",
+        "coordinates": { "x": 29, "y": 17 }
+      },
+      "price": 4.49,
+      "barcode": "007287400050",
+      "keywords": ["muffin", "muffins", "blueberry", "bakery"]
+    },
+    {
+      "id": "prod-043",
+      "name": "Glazed Donuts 6 Pack",
+      "category": "Bakery",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "bakery",
+        "coordinates": { "x": 28, "y": 18 }
+      },
+      "price": 3.99,
+      "barcode": "007287400067",
+      "keywords": ["donut", "donuts", "doughnut", "glazed", "bakery"]
+    },
+    {
+      "id": "prod-044",
+      "name": "Pork Chops Boneless per lb",
+      "category": "Meat",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "meat",
+        "coordinates": { "x": 21, "y": 22 }
+      },
+      "price": 5.49,
+      "barcode": "021130080045",
+      "keywords": ["pork", "chops", "meat", "protein"]
+    },
+    {
+      "id": "prod-045",
+      "name": "Salmon Fillet per lb",
+      "category": "Meat",
+      "location": {
+        "zone_type": "special_zone",
+        "zone_id": "meat",
+        "coordinates": { "x": 20, "y": 23 }
+      },
+      "price": 12.99,
+      "barcode": "021130080052",
+      "keywords": ["fish", "salmon", "seafood", "protein"]
+    },
+    {
+      "id": "prod-046",
+      "name": "Saltine Crackers 16oz",
+      "category": "Snacks",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "C",
+        "shelf_side": "right",
+        "shelf_section": "top",
+        "coordinates": { "x": 12, "y": 9 }
+      },
+      "price": 2.99,
+      "barcode": "041303001912",
+      "keywords": ["crackers", "saltine", "snack"]
+    },
+    {
+      "id": "prod-047",
+      "name": "Peanuts Roasted Salted 16oz",
+      "category": "Snacks",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "C",
+        "shelf_side": "left",
+        "shelf_section": "middle",
+        "coordinates": { "x": 11, "y": 12 }
+      },
+      "price": 4.99,
+      "barcode": "041303001929",
+      "keywords": ["nuts", "peanuts", "snack", "protein"]
+    },
+    {
+      "id": "prod-048",
+      "name": "Chocolate Ice Cream 1.5 Quart",
+      "category": "Frozen",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "F",
+        "shelf_side": "left",
+        "shelf_section": "bottom",
+        "coordinates": { "x": 18, "y": 6 }
+      },
+      "price": 4.99,
+      "barcode": "070640002023",
+      "keywords": ["ice cream", "chocolate", "frozen", "dessert"]
+    },
+    {
+      "id": "prod-049",
+      "name": "Brown Rice 2lb",
+      "category": "Pantry",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "B",
+        "shelf_side": "left",
+        "shelf_section": "bottom",
+        "coordinates": { "x": 8, "y": 15 }
+      },
+      "price": 3.99,
+      "barcode": "041303001936",
+      "keywords": ["rice", "brown", "grain", "pantry", "healthy"]
+    },
+    {
+      "id": "prod-050",
+      "name": "Oatmeal Quick Oats 18oz",
+      "category": "Pantry",
+      "location": {
+        "zone_type": "aisle",
+        "zone_id": "D",
+        "shelf_side": "right",
+        "shelf_section": "middle",
+        "coordinates": { "x": 15, "y": 7 }
+      },
+      "price": 3.49,
+      "barcode": "030000010303",
+      "keywords": ["oatmeal", "oats", "cereal", "breakfast", "pantry"]
+    }
+  ]
+}
