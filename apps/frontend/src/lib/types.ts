@@ -56,6 +56,7 @@ export interface PathResult {
   path: Point[];
   distance: number;
   found: boolean;
+  estimatedTime?: number;
 }
 
 // ============================================================================
