@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Supermarket table - stores supermarket information and grid dimensions
+model Supermarket {
+  id        String   @id @default(uuid())
+  name      String
+  width     Int      // Grid width in units
+  height    Int      // Grid height in units
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  aisles   Aisle[]
+  products Product[]
+
+  @@map("supermarkets")
+}
+
+// Aisle table - stores aisle information and positioning
+model Aisle {
+  id            String   @id @default(uuid())
+  supermarketId String   @map("supermarket_id")
+  aisleNumber   Int      @map("aisle_number") // e.g., 1, 2, 3...
+  label         String   // e.g., "Aisle A", "Aisle 1"
+  category      String?  // e.g., "Beverages & Snacks"
+  positionX     Int      @map("position_x") // Grid position X
+  positionY     Int      @map("position_y") // Grid position Y
+  width         Int      // Aisle width in grid units
+  height        Int      // Aisle height in grid units
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  supermarket Supermarket @relation(fields: [supermarketId], references: [id], onDelete: Cascade)
+  products    Product[]
+
+  @@unique([supermarketId, aisleNumber])
+  @@index([supermarketId])
+  @@map("aisles")
+}
+
+// Product table - stores product information and precise location
+model Product {
+  id            String       @id @default(uuid())
+  name          String
+  barcode       String?      @unique
+  category      String
+  supermarketId String       @map("supermarket_id")
+  aisleId       String?      @map("aisle_id")
+  aisleNumber   Int          @map("aisle_number") // Which aisle (1, 2, 3...)
+  aisleSegment  String       @map("aisle_segment") // Segment letter (A, B, C...)
+  shelfSide     ShelfSide    @map("shelf_side") // left or right
+  shelfSection  ShelfSection @map("shelf_section") // top, middle, or bottom
+  gridX         Int          @map("grid_x") // Exact grid position X
+  gridY         Int          @map("grid_y") // Exact grid position Y
+  price         Decimal?     @db.Decimal(10, 2)
+  imageUrl      String?      @map("image_url")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+
+  // Relations
+  supermarket Supermarket @relation(fields: [supermarketId], references: [id], onDelete: Cascade)
+  aisle       Aisle?      @relation(fields: [aisleId], references: [id], onDelete: SetNull)
+
+  @@index([supermarketId])
+  @@index([aisleId])
+  @@index([name])
+  @@map("products")
+}
+
+// Enums for shelf positioning
+enum ShelfSide {
+  left
+  right
+}
+
+enum ShelfSection {
+  top
+  middle
+  bottom
+}
