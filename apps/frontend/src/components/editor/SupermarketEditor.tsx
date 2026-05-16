@@ -7,6 +7,7 @@ import { PropertiesPanel } from "./PropertiesPanel"
 import {
     StoreLayout,
     Shelf,
+    Freezer,
     SpecialZone,
     Checkout,
     EntryExit,
@@ -54,6 +55,7 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
             dimensions: { width: 60, height: 40, unit: "meters" },
             grid: { cell_size: 1, walkable_paths: [] },
             shelves: [],
+            freezers: [],
             special_zones: [],
             checkouts: [],
             entry_exit: [],
@@ -154,6 +156,7 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
             return {
                 ...prev,
                 shelves: updatePosition(prev.shelves),
+                freezers: updatePosition(prev.freezers),
                 special_zones: updatePosition(prev.special_zones),
                 checkouts: updatePosition(prev.checkouts),
                 entry_exit: updatePosition(prev.entry_exit),
@@ -174,6 +177,7 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
             return {
                 ...prev,
                 shelves: updateItem(prev.shelves),
+                freezers: updateItem(prev.freezers),
                 special_zones: updateItem(prev.special_zones),
                 checkouts: updateItem(prev.checkouts),
                 entry_exit: updateItem(prev.entry_exit),
@@ -192,6 +196,7 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
             return {
                 ...prev,
                 shelves: filterOut(prev.shelves),
+                freezers: filterOut(prev.freezers),
                 special_zones: filterOut(prev.special_zones),
                 checkouts: filterOut(prev.checkouts),
                 entry_exit: filterOut(prev.entry_exit),
@@ -239,6 +244,13 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
         }))
     }
 
+    const handleUpdateStoreDimensions = (width: number, height: number) => {
+        setLayout((prev) => ({
+            ...prev,
+            dimensions: { ...prev.dimensions, width, height },
+        }))
+    }
+
     const handleSave = () => {
         console.log("Saving layout:", layout)
         alert("Layout saved! (Check console for data)")
@@ -274,6 +286,19 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
                     },
                 }
                 setLayout((prev) => ({ ...prev, shelves: [...prev.shelves, newShelf] }))
+                break
+
+            case "freezer":
+                const newFreezer: Freezer = {
+                    id,
+                    label: `Freezer ${layout.freezers.length + 1}`,
+                    type: "freezer",
+                    position,
+                    dimensions: { width: 2, height: 4 },
+                    orientation: "horizontal",
+                    category: "Frozen",
+                }
+                setLayout((prev) => ({ ...prev, freezers: [...prev.freezers, newFreezer] }))
                 break
 
             case "zone":
@@ -337,6 +362,7 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
 
         const allElements = [
             ...layout.shelves,
+            ...layout.freezers,
             ...layout.special_zones,
             ...layout.checkouts,
             ...layout.entry_exit,
@@ -356,12 +382,15 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
             <EditorControls
                 editorState={editorState}
                 mode={mode}
+                storeWidth={layout.dimensions.width}
+                storeHeight={layout.dimensions.height}
                 onUpdateState={updateEditorState}
                 onAddShelf={handleAddShelf}
                 onAddZone={handleAddZone}
                 onSave={handleSave}
                 onExport={handleExport}
                 onToggleMode={handleToggleMode}
+                onUpdateStoreDimensions={handleUpdateStoreDimensions}
             />
 
             {/* Center – Canvas */}
@@ -425,6 +454,7 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
                         showGrid={editorState.showGrid}
                         snapToGrid={editorState.snapToGrid}
                         shelves={layout.shelves}
+                        freezers={layout.freezers}
                         specialZones={layout.special_zones}
                         checkouts={layout.checkouts}
                         entryExit={layout.entry_exit}

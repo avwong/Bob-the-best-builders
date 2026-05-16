@@ -15,130 +15,113 @@
             "Perimeter walkway"
         ]
     },
-    "aisles": [
+    "shelves": [
         {
-            "id": "aisle_a",
+            "id": "shelf_a",
             "label": "A",
-            "type": "standard_aisle",
-            "position": {
-                "x": 5,
-                "y": 8
-            },
-            "dimensions": {
-                "width": 4,
-                "height": 15
-            },
+            "type": "shelf",
+            "position": { "x": 5, "y": 8 },
+            "dimensions": { "width": 1, "height": 12 },
             "orientation": "vertical",
             "category": "Beverages & Snacks",
             "shelves": {
-                "left": {
-                    "sections": [
-                        "top",
-                        "middle",
-                        "bottom"
-                    ]
-                },
-                "right": {
-                    "sections": [
-                        "top",
-                        "middle",
-                        "bottom"
-                    ]
-                }
+                "left": { "sections": ["top", "middle", "bottom"] },
+                "right": { "sections": ["top", "middle", "bottom"] }
             }
         },
         {
-            "id": "aisle_b",
+            "id": "shelf_b",
             "label": "B",
-            "type": "standard_aisle",
-            "position": {
-                "x": 11,
-                "y": 8
-            },
-            "dimensions": {
-                "width": 4,
-                "height": 15
-            },
+            "type": "shelf",
+            "position": { "x": 9, "y": 8 },
+            "dimensions": { "width": 1, "height": 12 },
             "orientation": "vertical",
             "category": "Canned Goods & Pasta",
             "shelves": {
-                "left": {
-                    "sections": [
-                        "top",
-                        "middle",
-                        "bottom"
-                    ]
-                },
-                "right": {
-                    "sections": [
-                        "top",
-                        "middle",
-                        "bottom"
-                    ]
-                }
+                "left": { "sections": ["top", "middle", "bottom"] },
+                "right": { "sections": ["top", "middle", "bottom"] }
             }
         },
         {
-            "id": "aisle_c",
+            "id": "shelf_c",
             "label": "C",
-            "type": "standard_aisle",
-            "position": {
-                "x": 17,
-                "y": 8
-            },
-            "dimensions": {
-                "width": 4,
-                "height": 15
-            },
+            "type": "shelf",
+            "position": { "x": 13, "y": 8 },
+            "dimensions": { "width": 1, "height": 12 },
             "orientation": "vertical",
             "category": "Breakfast & Spreads",
             "shelves": {
-                "left": {
-                    "sections": [
-                        "top",
-                        "middle",
-                        "bottom"
-                    ]
-                },
-                "right": {
-                    "sections": [
-                        "top",
-                        "middle",
-                        "bottom"
-                    ]
-                }
+                "left": { "sections": ["top", "middle", "bottom"] },
+                "right": { "sections": ["top", "middle", "bottom"] }
             }
         },
         {
-            "id": "aisle_d",
+            "id": "shelf_d",
             "label": "D",
-            "type": "standard_aisle",
-            "position": {
-                "x": 23,
-                "y": 8
-            },
-            "dimensions": {
-                "width": 4,
-                "height": 15
-            },
+            "type": "shelf",
+            "position": { "x": 17, "y": 8 },
+            "dimensions": { "width": 1, "height": 12 },
             "orientation": "vertical",
             "category": "Condiments & Sauces",
             "shelves": {
-                "left": {
-                    "sections": [
-                        "top",
-                        "middle",
-                        "bottom"
-                    ]
-                },
-                "right": {
-                    "sections": [
-                        "top",
-                        "middle",
-                        "bottom"
-                    ]
-                }
+                "left": { "sections": ["top", "middle", "bottom"] },
+                "right": { "sections": ["top", "middle", "bottom"] }
             }
+        },
+        {
+            "id": "shelf_e",
+            "label": "E",
+            "type": "shelf",
+            "position": { "x": 21, "y": 8 },
+            "dimensions": { "width": 1, "height": 12 },
+            "orientation": "vertical",
+            "category": "Cleaning & Household",
+            "shelves": {
+                "left": { "sections": ["top", "middle", "bottom"] },
+                "right": { "sections": ["top", "middle", "bottom"] }
+            }
+        },
+        {
+            "id": "shelf_f",
+            "label": "F",
+            "type": "shelf",
+            "position": { "x": 25, "y": 8 },
+            "dimensions": { "width": 1, "height": 12 },
+            "orientation": "vertical",
+            "category": "Personal Care",
+            "shelves": {
+                "left": { "sections": ["top", "middle", "bottom"] },
+                "right": { "sections": ["top", "middle", "bottom"] }
+            }
+        }
+    ],
+    "freezers": [
+        {
+            "id": "freezer_1",
+            "label": "Freezer 1",
+            "type": "freezer",
+            "position": { "x": 35, "y": 8 },
+            "dimensions": { "width": 2, "height": 5 },
+            "orientation": "vertical",
+            "category": "Ice Cream & Frozen"
+        },
+        {
+            "id": "freezer_2",
+            "label": "Freezer 2",
+            "type": "freezer",
+            "position": { "x": 35, "y": 15 },
+            "dimensions": { "width": 2, "height": 5 },
+            "orientation": "vertical",
+            "category": "Frozen Meals"
+        },
+        {
+            "id": "freezer_3",
+            "label": "Freezer 3",
+            "type": "freezer",
+            "position": { "x": 40, "y": 8 },
+            "dimensions": { "width": 2, "height": 5 },
+            "orientation": "vertical",
+            "category": "Frozen Vegetables"
         }
     ],
     "special_zones": [
@@ -146,130 +129,57 @@
             "id": "produce",
             "label": "Produce",
             "type": "produce_section",
-            "position": {
-                "x": 5,
-                "y": 28
-            },
-            "dimensions": {
-                "width": 8,
-                "height": 6
-            },
+            "position": { "x": 5, "y": 26 },
+            "dimensions": { "width": 8, "height": 6 },
             "category": "Fresh Produce"
         },
         {
             "id": "deli",
             "label": "Deli",
             "type": "deli_section",
-            "position": {
-                "x": 18,
-                "y": 28
-            },
-            "dimensions": {
-                "width": 8,
-                "height": 6
-            },
+            "position": { "x": 18, "y": 26 },
+            "dimensions": { "width": 8, "height": 6 },
             "category": "Deli & Meats"
         },
         {
             "id": "bakery",
             "label": "Bakery",
             "type": "bakery_section",
-            "position": {
-                "x": 31,
-                "y": 28
-            },
-            "dimensions": {
-                "width": 8,
-                "height": 6
-            },
+            "position": { "x": 31, "y": 26 },
+            "dimensions": { "width": 8, "height": 6 },
             "category": "Bakery"
         }
     ],
     "checkouts": [
         {
             "id": "checkout_1",
-            "position": {
-                "x": 8,
-                "y": 36
-            },
-            "dimensions": {
-                "width": 2,
-                "height": 3
-            }
+            "position": { "x": 8, "y": 36 },
+            "dimensions": { "width": 2, "height": 2 }
         },
         {
             "id": "checkout_2",
-            "position": {
-                "x": 12,
-                "y": 36
-            },
-            "dimensions": {
-                "width": 2,
-                "height": 3
-            }
+            "position": { "x": 12, "y": 36 },
+            "dimensions": { "width": 2, "height": 2 }
         },
         {
             "id": "checkout_3",
-            "position": {
-                "x": 16,
-                "y": 36
-            },
-            "dimensions": {
-                "width": 2,
-                "height": 3
-            }
-        }
-    ],
-    "walkways": [
-        {
-            "id": "main_corridor",
-            "type": "horizontal",
-            "position": {
-                "x": 0,
-                "y": 5
-            },
-            "dimensions": {
-                "width": 60,
-                "height": 2
-            }
-        },
-        {
-            "id": "perimeter_top",
-            "type": "horizontal",
-            "position": {
-                "x": 0,
-                "y": 0
-            },
-            "dimensions": {
-                "width": 60,
-                "height": 4
-            }
+            "position": { "x": 16, "y": 36 },
+            "dimensions": { "width": 2, "height": 2 }
         }
     ],
     "entry_exit": [
         {
             "id": "entrance",
             "type": "entrance",
-            "position": {
-                "x": 28,
-                "y": 1
-            },
-            "dimensions": {
-                "width": 4,
-                "height": 2
-            }
+            "position": { "x": 28, "y": 1 },
+            "dimensions": { "width": 4, "height": 2 }
         },
         {
             "id": "exit",
             "type": "exit",
-            "position": {
-                "x": 52,
-                "y": 37
-            },
-            "dimensions": {
-                "width": 4,
-                "height": 2
-            }
+            "position": { "x": 52, "y": 37 },
+            "dimensions": { "width": 4, "height": 2 }
         }
-    ]
+    ],
+    "walls": []
 }

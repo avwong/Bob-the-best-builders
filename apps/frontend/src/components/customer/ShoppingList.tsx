@@ -1,213 +1,161 @@
-"use client"
+'use client';
 
-import { ProductWithLocation } from "@/lib/routeOptimization"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
+import React from 'react';
+import { ShoppingListItem } from '@/types/customer';
+import { Check, Trash2, MapPin, Minus, Plus, ShoppingCart } from 'lucide-react';
 
 interface ShoppingListProps {
-  products: ProductWithLocation[]
-  onRemoveProduct: (productId: string) => void
-  onClearList: () => void
-  onOptimizeRoute?: () => void
-  isOptimizing?: boolean
-  optimizedOrder?: number[]
-  totalDistance?: number
-  totalTime?: number
-  className?: string
+    items: ShoppingListItem[];
+    onToggleCheck: (itemId: string) => void;
+    onRemoveItem: (itemId: string) => void;
+    onUpdateQuantity: (itemId: string, quantity: number) => void;
+    onShowOnMap?: (item: ShoppingListItem) => void;
 }
 
-/**
- * ShoppingList Component
- * 
- * Displays a list of products to purchase with route optimization.
- */
-export function ShoppingList({
-  products,
-  onRemoveProduct,
-  onClearList,
-  onOptimizeRoute,
-  isOptimizing = false,
-  optimizedOrder,
-  totalDistance,
-  totalTime,
-  className,
-}: ShoppingListProps) {
-  const hasProducts = products.length > 0
-  const hasOptimizedRoute = optimizedOrder && optimizedOrder.length > 0
+export const ShoppingList: React.FC<ShoppingListProps> = ({
+    items,
+    onToggleCheck,
+    onRemoveItem,
+    onUpdateQuantity,
+    onShowOnMap,
+}) => {
+    const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+    const checkedItems = items.filter((item) => item.checked).length;
+    const progress = items.length > 0 ? (checkedItems / items.length) * 100 : 0;
 
-  // Reorder products if optimized order exists
-  const displayProducts = hasOptimizedRoute
-    ? optimizedOrder.map(index => products[index])
-    : products
-
-  return (
-    <Card className={className}>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              🛒 Shopping List
-              {hasProducts && (
-                <span className="text-sm font-normal text-muted-foreground">
-                  ({products.length} {products.length === 1 ? 'item' : 'items'})
-                </span>
-              )}
-            </CardTitle>
-            <CardDescription>
-              {hasProducts
-                ? "Add products to optimize your shopping route"
-                : "Your shopping list is empty"}
-            </CardDescription>
-          </div>
-          {hasProducts && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onClearList}
-              className="text-red-600 hover:text-red-700"
-            >
-              Clear All
-            </Button>
-          )}
-        </div>
-      </CardHeader>
-
-      <CardContent className="space-y-4">
-        {/* Product List */}
-        {hasProducts ? (
-          <div className="space-y-2">
-            {displayProducts.map((product, index) => (
-              <div
-                key={product.id}
-                className={cn(
-                  "flex items-center gap-3 p-3 rounded-lg border transition-colors",
-                  hasOptimizedRoute
-                    ? "bg-blue-50 border-blue-200"
-                    : "bg-gray-50 border-gray-200 hover:bg-gray-100"
-                )}
-              >
-                {/* Order number (if optimized) */}
-                {hasOptimizedRoute && (
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
-                    {index + 1}
-                  </div>
-                )}
-
-                {/* Product info */}
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 truncate">
-                    {product.name}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    {product.aisle && `Aisle ${product.aisle}`}
-                    {product.aisle && product.category && " • "}
-                    {product.category}
-                  </p>
+    return (
+        <div className="flex flex-col h-full">
+            {/* Header */}
+            <div className="p-4 border-b border-gray-200 bg-white sticky top-0 z-10">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h2 className="text-xl font-bold text-gray-900">Mi Lista de Compras</h2>
+                        <p className="text-sm text-gray-500 mt-0.5">
+                            {checkedItems} de {items.length} completados
+                        </p>
+                    </div>
+                    <div className="text-right">
+                        <p className="text-xs text-gray-400 uppercase tracking-wider">Total</p>
+                        <p className="text-2xl font-bold text-emerald-600">{totalItems}</p>
+                    </div>
                 </div>
-
-                {/* Remove button */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onRemoveProduct(product.id)}
-                  className="flex-shrink-0 text-gray-500 hover:text-red-600"
-                >
-                  ✕
-                </Button>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8 text-gray-500">
-            <p className="text-4xl mb-2">🛒</p>
-            <p className="text-sm">No products added yet</p>
-            <p className="text-xs mt-1">Search and add products to get started</p>
-          </div>
-        )}
-
-        {/* Route Summary */}
-        {hasOptimizedRoute && totalDistance !== undefined && totalTime !== undefined && (
-          <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-            <h4 className="font-semibold text-green-900 mb-2 flex items-center gap-2">
-              ✓ Optimized Route
-            </h4>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <p className="text-green-700">Total Distance</p>
-                <p className="text-2xl font-bold text-green-900">
-                  {totalDistance.toFixed(1)}m
-                </p>
-              </div>
-              <div>
-                <p className="text-green-700">Estimated Time</p>
-                <p className="text-2xl font-bold text-green-900">
-                  {Math.ceil(totalTime / 60)}:{(totalTime % 60).toString().padStart(2, '0')}
-                </p>
-              </div>
+                {/* Progress bar */}
+                {items.length > 0 && (
+                    <div className="mt-3 flex items-center gap-3">
+                        <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-500 ease-out rounded-full"
+                                style={{ width: `${progress}%` }}
+                            />
+                        </div>
+                        <span className="text-sm font-semibold text-emerald-600 min-w-[40px] text-right">
+                            {Math.round(progress)}%
+                        </span>
+                    </div>
+                )}
             </div>
-          </div>
-        )}
 
-        {/* Optimize Button */}
-        {hasProducts && onOptimizeRoute && (
-          <Button
-            onClick={onOptimizeRoute}
-            disabled={isOptimizing}
-            className="w-full"
-            size="lg"
-          >
-            {isOptimizing ? (
-              <>
-                <span className="animate-spin mr-2">⚙️</span>
-                Optimizing Route...
-              </>
-            ) : hasOptimizedRoute ? (
-              <>🔄 Re-optimize Route</>
-            ) : (
-              <>🎯 Optimize Shopping Route</>
-            )}
-          </Button>
-        )}
-      </CardContent>
-    </Card>
-  )
-}
+            {/* List Items */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-2">
+                {items.length === 0 ? (
+                    <div className="text-center mt-12">
+                        <div className="bg-gray-50 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                            <ShoppingCart className="h-10 w-10 text-gray-300" />
+                        </div>
+                        <p className="text-lg font-semibold text-gray-700">Tu lista está vacía</p>
+                        <p className="text-sm text-gray-500 mt-1">
+                            Busca productos y agrégalos a tu lista
+                        </p>
+                    </div>
+                ) : (
+                    items.map((item) => (
+                        <div
+                            key={item.id}
+                            className={`bg-white rounded-xl p-3.5 border transition-all ${
+                                item.checked
+                                    ? 'border-gray-100 opacity-60'
+                                    : 'border-gray-100 shadow-sm'
+                            }`}
+                        >
+                            <div className="flex items-start gap-3">
+                                {/* Checkbox */}
+                                <button
+                                    onClick={() => onToggleCheck(item.id)}
+                                    className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all mt-0.5 ${
+                                        item.checked
+                                            ? 'bg-emerald-500 border-emerald-500'
+                                            : 'border-gray-300 hover:border-emerald-400'
+                                    }`}
+                                    aria-label={item.checked ? 'Desmarcar' : 'Marcar como completado'}
+                                >
+                                    {item.checked && <Check className="h-3.5 w-3.5 text-white" />}
+                                </button>
 
-/**
- * Compact Shopping List Badge
- * Shows product count with quick access
- */
-interface ShoppingListBadgeProps {
-  productCount: number
-  onClick: () => void
-  hasOptimizedRoute?: boolean
-}
+                                {/* Product Info */}
+                                <div className="flex-1 min-w-0">
+                                    <h3
+                                        className={`font-semibold text-[15px] ${
+                                            item.checked ? 'line-through text-gray-400' : 'text-gray-900'
+                                        }`}
+                                    >
+                                        {item.productName}
+                                    </h3>
 
-export function ShoppingListBadge({
-  productCount,
-  onClick,
-  hasOptimizedRoute = false,
-}: ShoppingListBadgeProps) {
-  if (productCount === 0) return null
+                                    {/* Quantity Controls */}
+                                    <div className="flex items-center gap-2 mt-2">
+                                        <button
+                                            onClick={() =>
+                                                onUpdateQuantity(item.id, Math.max(1, item.quantity - 1))
+                                            }
+                                            disabled={item.quantity <= 1}
+                                            className="h-7 w-7 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                        >
+                                            <Minus className="h-3.5 w-3.5 text-gray-600" />
+                                        </button>
+                                        <span className="text-sm font-bold text-gray-800 w-8 text-center">
+                                            {item.quantity}
+                                        </span>
+                                        <button
+                                            onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                                            className="h-7 w-7 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+                                        >
+                                            <Plus className="h-3.5 w-3.5 text-gray-600" />
+                                        </button>
+                                    </div>
 
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "fixed bottom-4 right-4 z-50",
-        "flex items-center gap-2 px-4 py-3 rounded-full shadow-lg",
-        "font-semibold text-white transition-all hover:scale-105",
-        hasOptimizedRoute
-          ? "bg-green-600 hover:bg-green-700"
-          : "bg-blue-600 hover:bg-blue-700"
-      )}
-    >
-      <span className="text-xl">🛒</span>
-      <span>{productCount}</span>
-      {hasOptimizedRoute && <span className="text-xs">✓</span>}
-    </button>
-  )
-}
+                                    {/* Location Info */}
+                                    {item.location && (
+                                        <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
+                                            <MapPin className="h-3 w-3" />
+                                            Pasillo {item.location.x}
+                                        </p>
+                                    )}
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div className="flex flex-col gap-1.5">
+                                    {onShowOnMap && item.location && (
+                                        <button
+                                            onClick={() => onShowOnMap(item)}
+                                            className="p-2 rounded-lg border border-gray-200 hover:bg-emerald-50 hover:border-emerald-200 transition-colors"
+                                        >
+                                            <MapPin className="h-4 w-4 text-emerald-600" />
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => onRemoveItem(item.id)}
+                                        className="p-2 rounded-lg border border-gray-200 hover:bg-red-50 hover:border-red-200 transition-colors"
+                                    >
+                                        <Trash2 className="h-4 w-4 text-red-400" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
+        </div>
+    );
+};
 
 // Made with Bob

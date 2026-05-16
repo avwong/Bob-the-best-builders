@@ -316,6 +316,11 @@ export function createGridFromLayout(layout: StoreLayout): Grid {
     markRectangleObstacle(grid, shelf.position, shelf.dimensions);
   }
 
+  // Mark freezers as obstacles
+  for (const freezer of (layout as any).freezers ?? []) {
+    markRectangleObstacle(grid, freezer.position, freezer.dimensions);
+  }
+
   // Mark walls as obstacles
   for (const wall of layout.walls) {
     markRectangleObstacle(grid, wall.position, wall.dimensions);

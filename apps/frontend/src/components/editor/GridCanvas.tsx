@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef, useState, useCallback, useEffect } from "react"
-import { Shelf, SpecialZone, Checkout, EntryExit, Wall, Position, EditorState } from "@/types/supermarket"
+import { Shelf, Freezer, SpecialZone, Checkout, EntryExit, Wall, Position, EditorState } from "@/types/supermarket"
 
 interface GridCanvasProps {
     storeWidth: number
@@ -10,6 +10,7 @@ interface GridCanvasProps {
     showGrid: boolean
     snapToGrid: boolean
     shelves: Shelf[]
+    freezers: Freezer[]
     specialZones: SpecialZone[]
     checkouts: Checkout[]
     entryExit: EntryExit[]
@@ -36,6 +37,7 @@ export function GridCanvas({
     showGrid,
     snapToGrid,
     shelves,
+    freezers,
     specialZones,
     checkouts,
     entryExit,
@@ -135,7 +137,7 @@ export function GridCanvas({
             // Start dragging an element
             e.stopPropagation()
 
-            const allElements = [...shelves, ...specialZones, ...checkouts, ...entryExit, ...walls]
+            const allElements = [...shelves, ...freezers, ...specialZones, ...checkouts, ...entryExit, ...walls]
             const element = allElements.find((el) => el.id === elementId)
             if (!element) return
 
@@ -201,7 +203,6 @@ export function GridCanvas({
                     x: prev.x - dx,
                     y: prev.y - dy,
                 }))
-                // Don't update panStart — it will naturally track because we shift viewOrigin
             }
         },
         [isDragging, draggedElement, isPanning, dragOffset, panStart, getSVGPoint, snapPosition, onUpdateElement]
@@ -310,6 +311,7 @@ export function GridCanvas({
 
         // Vertical lines
         for (let x = 0; x <= storeWidth; x += gridSize) {
+            const isMajor = x % (gridSize * 5) === 0
             lines.push(
                 <line
                     key={`v-${x}`}
@@ -317,15 +319,16 @@ export function GridCanvas({
                     y1={0}
                     x2={x}
                     y2={storeHeight}
-                    stroke="#e0e4ea"
-                    strokeWidth={0.05}
-                    opacity={x % 5 === 0 ? 0.8 : 0.4}
+                    stroke="#cbd5e1"
+                    strokeWidth={isMajor ? 0.08 : 0.04}
+                    opacity={isMajor ? 0.7 : 0.35}
                 />
             )
         }
 
         // Horizontal lines
         for (let y = 0; y <= storeHeight; y += gridSize) {
+            const isMajor = y % (gridSize * 5) === 0
             lines.push(
                 <line
                     key={`h-${y}`}
@@ -333,9 +336,9 @@ export function GridCanvas({
                     y1={y}
                     x2={storeWidth}
                     y2={y}
-                    stroke="#e0e4ea"
-                    strokeWidth={0.05}
-                    opacity={y % 5 === 0 ? 0.8 : 0.4}
+                    stroke="#cbd5e1"
+                    strokeWidth={isMajor ? 0.08 : 0.04}
+                    opacity={isMajor ? 0.7 : 0.35}
                 />
             )
         }
@@ -372,6 +375,57 @@ export function GridCanvas({
                     pointerEvents="none"
                 >
                     {shelf.label}
+                </text>
+            </g>
+        )
+    }
+
+    const renderFreezer = (freezer: Freezer) => {
+        const isSelected = selectedElement === freezer.id
+        return (
+            <g
+                key={freezer.id}
+                onMouseDown={(e) => handleMouseDown(e, freezer.id)}
+                style={{ cursor: selectedTool === "select" ? "move" : "default" }}
+            >
+                <rect
+                    x={freezer.position.x}
+                    y={freezer.position.y}
+                    width={freezer.dimensions.width}
+                    height={freezer.dimensions.height}
+                    fill={isSelected ? "#dbeafe" : "#0ea5e9"}
+                    stroke={isSelected ? "#3b82f6" : "#0369a1"}
+                    strokeWidth={isSelected ? 0.15 : 0.08}
+                    rx={0.15}
+                />
+                {/* Frost pattern lines */}
+                <line
+                    x1={freezer.position.x + freezer.dimensions.width * 0.2}
+                    y1={freezer.position.y + freezer.dimensions.height * 0.3}
+                    x2={freezer.position.x + freezer.dimensions.width * 0.8}
+                    y2={freezer.position.y + freezer.dimensions.height * 0.3}
+                    stroke="rgba(255,255,255,0.4)"
+                    strokeWidth={0.06}
+                />
+                <line
+                    x1={freezer.position.x + freezer.dimensions.width * 0.2}
+                    y1={freezer.position.y + freezer.dimensions.height * 0.7}
+                    x2={freezer.position.x + freezer.dimensions.width * 0.8}
+                    y2={freezer.position.y + freezer.dimensions.height * 0.7}
+                    stroke="rgba(255,255,255,0.4)"
+                    strokeWidth={0.06}
+                />
+                <text
+                    x={freezer.position.x + freezer.dimensions.width / 2}
+                    y={freezer.position.y + freezer.dimensions.height / 2}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fontSize={Math.min(freezer.dimensions.width, freezer.dimensions.height) * 0.35}
+                    fontWeight="bold"
+                    fill={isSelected ? "#374151" : "#fff"}
+                    pointerEvents="none"
+                >
+                    {freezer.label}
                 </text>
             </g>
         )
@@ -590,6 +644,7 @@ export function GridCanvas({
                 {/* Store elements — pointer-events disabled in navigate mode */}
                 <g style={{ pointerEvents: mode === "navigate" ? "none" : "auto" }}>
                     {shelves.map(renderShelf)}
+                    {freezers.map(renderFreezer)}
                     {specialZones.map(renderSpecialZone)}
                     {checkouts.map(renderCheckout)}
                     {entryExit.map(renderEntryExit)}
