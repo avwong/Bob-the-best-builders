@@ -7,6 +7,8 @@ import { ShoppingList } from '@/components/customer/ShoppingList';
 import { SupermarketMap } from '@/components/customer/SupermarketMap';
 import { ChatbotButton } from '@/components/customer/ChatbotButton';
 import { LocationSelector, LocationOption, generateLocationOptions } from '@/components/customer/LocationSelector';
+import { useNavigation } from '@/lib/hooks/useNavigation';
+import { createGridFromLayout } from '@/lib/pathfinding';
 import { MOCK_PRODUCTS } from '@/data/products';
 import { Product, ShoppingListItem, UserPosition } from '@/types/customer';
 import { Shelf, Freezer, SpecialZone, Checkout, EntryExit, Wall } from '@/types/supermarket';
@@ -17,9 +19,21 @@ export default function ShopPage() {
     const [activeTab, setActiveTab] = useState<TabView>('search');
     const [shoppingList, setShoppingList] = useState<ShoppingListItem[]>([]);
     const [highlightedItem, setHighlightedItem] = useState<ShoppingListItem | null>(null);
-    const [userPosition, setUserPosition] = useState<UserPosition>({ x: 30, y: 2 });
     const [showLocationSelector, setShowLocationSelector] = useState(false);
-    const [selectedLocation, setSelectedLocation] = useState<LocationOption | null>(null);
+
+    // Use navigation hook for location and route management
+    const navigation = useNavigation({
+        autoCalculate: false, // We'll calculate manually for shopping list routes
+        onRouteCalculated: (route) => {
+            console.log('Route calculated:', route);
+        },
+        onError: (error) => {
+            console.error('Navigation error:', error);
+        },
+    });
+
+    // Derive user position from navigation state
+    const userPosition: UserPosition = navigation.currentLocation?.position || { x: 30, y: 2 };
 
     // Store layout data
     const [storeLayout, setStoreLayout] = useState<{
@@ -124,15 +138,20 @@ export default function ShopPage() {
 
     // Handle location selection
     const handleLocationSelect = (location: LocationOption) => {
-        setSelectedLocation(location);
-        setUserPosition(location.position);
+        navigation.setCurrentLocation(location);
         setShowLocationSelector(false);
     };
 
     // Handle custom location
     const handleCustomLocation = (position: UserPosition) => {
-        setUserPosition(position);
-        setSelectedLocation(null);
+        // Create a custom location option
+        const customLocation: LocationOption = {
+            id: 'custom',
+            type: 'custom',
+            label: `Custom (${position.x}, ${position.y})`,
+            position: position,
+        };
+        navigation.setCurrentLocation(customLocation);
         setShowLocationSelector(false);
     };
 
@@ -280,7 +299,7 @@ export default function ShopPage() {
                     >
                         <MapPin className="h-4 w-4" />
                         <span className="hidden sm:inline">
-                            {selectedLocation ? selectedLocation.label : 'Ubicación'}
+                            {navigation.currentLocation ? navigation.currentLocation.label : 'Ubicación'}
                         </span>
                     </button>
                     {shoppingList.length > 0 && (
@@ -363,7 +382,7 @@ export default function ShopPage() {
                             {locationOptions.length > 0 ? (
                                 <LocationSelector
                                     locations={locationOptions}
-                                    selectedLocation={selectedLocation}
+                                    selectedLocation={navigation.currentLocation}
                                     onLocationSelect={handleLocationSelect}
                                     allowCustom={true}
                                     onCustomLocation={handleCustomLocation}
