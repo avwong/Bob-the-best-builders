@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { GridCanvas } from "./GridCanvas"
 import { EditorControls } from "./EditorControls"
 import { PropertiesPanel } from "./PropertiesPanel"
@@ -19,6 +19,7 @@ import { createGridFromLayout, findPathEnhanced } from "@/lib/pathfinding"
 import { formatTime } from "@/lib/utils"
 import type { PathResult } from "@/lib/types"
 import { Button } from "@/components/ui/button"
+import { AppSettings, defaultSettings } from "@/types/settings"
 
 interface SupermarketEditorProps {
     initialLayout?: StoreLayout
@@ -47,21 +48,56 @@ function findNearestWalkable(
 }
 
 export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
-    const [layout, setLayout] = useState<StoreLayout>(
-        initialLayout || {
-            store_id: "new_store",
-            store_name: "New Supermarket",
-            version: "1.0",
-            dimensions: { width: 60, height: 40, unit: "meters" },
-            grid: { cell_size: 1, walkable_paths: [] },
-            shelves: [],
-            freezers: [],
-            special_zones: [],
-            checkouts: [],
-            entry_exit: [],
-            walls: [],
+    const defaultLayout: StoreLayout = {
+        store_id: "new_store",
+        store_name: "New Supermarket",
+        version: "1.0",
+        dimensions: { width: 60, height: 40, unit: "meters" },
+        grid: { cell_size: 1, walkable_paths: [] },
+        shelves: [],
+        freezers: [],
+        special_zones: [],
+        checkouts: [],
+        entry_exit: [],
+        walls: [],
+    }
+
+    const [layout, setLayout] = useState<StoreLayout>(initialLayout || defaultLayout)
+    const [settings, setSettings] = useState<AppSettings>(defaultSettings)
+
+    // Load layout and settings from localStorage on mount
+    useEffect(() => {
+        if (!initialLayout) {
+            const savedLayoutStr = localStorage.getItem('currentLayout')
+            if (savedLayoutStr) {
+                try {
+                    const savedLayout = JSON.parse(savedLayoutStr)
+                    setLayout(savedLayout)
+                    console.log("Loaded layout from localStorage:", savedLayout.store_name)
+                } catch (error) {
+                    console.error("Error loading layout:", error)
+                }
+            }
         }
-    )
+
+        // Load settings
+        const savedSettingsStr = localStorage.getItem('appSettings')
+        if (savedSettingsStr) {
+            try {
+                const savedSettings = JSON.parse(savedSettingsStr)
+                // Migrate old settings format if needed
+                if (savedSettings.colors && ('primary' in savedSettings.colors || 'secondary' in savedSettings.colors)) {
+                    savedSettings.colors = {
+                        brandColor: savedSettings.colors.primary || defaultSettings.colors.brandColor,
+                        mapFloor: savedSettings.colors.background || defaultSettings.colors.mapFloor,
+                    }
+                }
+                setSettings(savedSettings)
+            } catch (error) {
+                console.error("Error loading settings:", error)
+            }
+        }
+    }, [initialLayout])
 
     const [editorState, setEditorState] = useState<EditorState>({
         selectedTool: "select",
@@ -252,8 +288,41 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
     }
 
     const handleSave = () => {
-        console.log("Saving layout:", layout)
-        alert("Layout saved! (Check console for data)")
+        try {
+            // Get existing layouts from localStorage
+            const savedLayoutsStr = localStorage.getItem('savedLayouts')
+            const savedLayouts = savedLayoutsStr ? JSON.parse(savedLayoutsStr) : []
+
+            // Create layout entry with metadata
+            const layoutEntry = {
+                id: layout.store_id || `layout_${Date.now()}`,
+                name: layout.store_name || 'Unnamed Layout',
+                lastModified: new Date().toISOString().split('T')[0],
+                shelves: layout.shelves.length,
+                data: layout
+            }
+
+            // Check if layout already exists (update) or is new (add)
+            const existingIndex = savedLayouts.findIndex((l: any) => l.id === layoutEntry.id)
+            if (existingIndex >= 0) {
+                savedLayouts[existingIndex] = layoutEntry
+            } else {
+                savedLayouts.unshift(layoutEntry) // Add to beginning
+            }
+
+            // Keep only last 10 layouts
+            const trimmedLayouts = savedLayouts.slice(0, 10)
+
+            // Save to localStorage
+            localStorage.setItem('savedLayouts', JSON.stringify(trimmedLayouts))
+            localStorage.setItem('currentLayout', JSON.stringify(layout))
+
+            alert("✅ Layout saved successfully!")
+            console.log("Saved layout:", layoutEntry)
+        } catch (error) {
+            console.error("Error saving layout:", error)
+            alert("❌ Failed to save layout")
+        }
     }
 
     const handleExport = () => {
@@ -406,8 +475,8 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
                                 {routeStart
                                     ? `Start (${routeStart.x}, ${routeStart.y})`
                                     : hasEntrance
-                                    ? "No entrance placed yet"
-                                    : "Click to set start"}
+                                        ? "No entrance placed yet"
+                                        : "Click to set start"}
                             </span>
                         </div>
 
@@ -471,6 +540,7 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
                         routeStart={routeStart}
                         routeEnd={routeEnd}
                         onNavigateClick={handleNavigateClick}
+                        colors={settings.colors}
                     />
                 </div>
             </div>

@@ -1,9 +1,6 @@
 export interface ColorSettings {
-    primary: string
-    secondary: string
-    accent: string
-    background: string
-    text: string
+    brandColor: string
+    mapFloor: string
 }
 
 export interface AppSettings {
@@ -19,11 +16,8 @@ export const defaultSettings: AppSettings = {
     storeName: "My Supermarket",
     storeId: "store_001",
     colors: {
-        primary: "#3b82f6",
-        secondary: "#e5e7eb",
-        accent: "#f59e0b",
-        background: "#ffffff",
-        text: "#374151",
+        brandColor: "#10b981",
+        mapFloor: "#f8fafc",
     },
     gridSize: 1,
     snapToGrid: true,
