@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Settings, FileJson, Layout, ShoppingCart, Map, Trash2 } from "lucide-react"
+import { Settings, FileJson, Layout, ShoppingCart, Map, Trash2, Package } from "lucide-react"
 
 export default function Dashboard() {
     const router = useRouter()
@@ -79,7 +79,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Quick Actions Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 mb-10">
 
                     {/* Customer View — Primary */}
                     <button
@@ -111,6 +111,41 @@ export default function Dashboard() {
                         </h3>
                         <p style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.75)", lineHeight: 1.4 }}>
                             Navigate the store and find products
+                        </p>
+                    </button>
+
+                    {/* Product Management */}
+                    <button
+                        onClick={() => router.push("/products")}
+                        className="group text-left rounded-2xl p-6 transition-all duration-300"
+                        style={{
+                            background: "#fff",
+                            border: "1px solid #e2e8f0",
+                            boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+                        }}
+                        onMouseEnter={e => {
+                            e.currentTarget.style.transform = "translateY(-4px)"
+                            e.currentTarget.style.borderColor = "#10b981"
+                            e.currentTarget.style.boxShadow = "0 12px 32px rgba(0,0,0,0.08)"
+                        }}
+                        onMouseLeave={e => {
+                            e.currentTarget.style.transform = "translateY(0)"
+                            e.currentTarget.style.borderColor = "#e2e8f0"
+                            e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.04)"
+                        }}
+                    >
+                        <div style={{
+                            width: 44, height: 44, borderRadius: 12,
+                            background: "#ecfdf5",
+                            display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16,
+                        }}>
+                            <Package className="w-5 h-5" style={{ color: "#10b981" }} />
+                        </div>
+                        <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "#1e293b", marginBottom: 4 }}>
+                            Products
+                        </h3>
+                        <p style={{ fontSize: "0.8rem", color: "#94a3b8", lineHeight: 1.4 }}>
+                            Manage catalog and locations
                         </p>
                     </button>
 

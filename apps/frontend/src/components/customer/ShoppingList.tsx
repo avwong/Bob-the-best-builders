@@ -130,7 +130,7 @@ export const ShoppingList: React.FC<ShoppingListProps> = ({
                                             ? 'bg-emerald-500 border-emerald-500'
                                             : 'border-gray-300 hover:border-emerald-400'
                                             }`}
-                                        aria-label={item.checked ? 'Desmarcar' : 'Marcar como completado'}
+                                        aria-label={item.checked ? 'Mark as pending' : 'Mark as complete'}
                                     >
                                         {item.checked && <Check className="h-3.5 w-3.5 text-white" />}
                                     </button>
@@ -170,7 +170,7 @@ export const ShoppingList: React.FC<ShoppingListProps> = ({
                                         {item.location && (
                                             <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
                                                 <MapPin className="h-3 w-3" />
-                                                Pasillo {item.location.x}
+                                                {item.location.label || `Position ${item.location.x}, ${item.location.y}`}
                                             </p>
                                         )}
                                     </div>
@@ -189,7 +189,7 @@ export const ShoppingList: React.FC<ShoppingListProps> = ({
                                             onClick={() => handleRemoveItem(item.id)}
                                             disabled={removingItems.has(item.id)}
                                             className="p-2 rounded-lg border border-gray-200 hover:bg-red-50 hover:border-red-200 transition-all active:scale-90 disabled:opacity-50"
-                                            title="Eliminar de la lista"
+                                            title="Remove from list"
                                         >
                                             <Trash2 className="h-4 w-4 text-red-400" />
                                         </button>

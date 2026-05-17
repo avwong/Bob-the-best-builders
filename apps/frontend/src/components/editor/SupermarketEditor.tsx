@@ -20,6 +20,12 @@ import { formatTime } from "@/lib/utils"
 import type { PathResult } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { AppSettings, defaultSettings } from "@/types/settings"
+import {
+    getSupermarketLayout,
+    getSupermarkets,
+    mapSupermarketLayoutToEditor,
+    saveSupermarketLayout,
+} from "@/lib/api"
 
 interface SupermarketEditorProps {
     initialLayout?: StoreLayout
@@ -64,20 +70,38 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
 
     const [layout, setLayout] = useState<StoreLayout>(initialLayout || defaultLayout)
     const [settings, setSettings] = useState<AppSettings>(defaultSettings)
+    const [isLoadingLayout, setIsLoadingLayout] = useState(!initialLayout)
+    const [saveStatus, setSaveStatus] = useState<string | null>(null)
 
     // Load layout and settings from localStorage on mount
     useEffect(() => {
+        let isActive = true
+
         if (!initialLayout) {
-            const savedLayoutStr = localStorage.getItem('currentLayout')
-            if (savedLayoutStr) {
-                try {
-                    const savedLayout = JSON.parse(savedLayoutStr)
-                    setLayout(savedLayout)
-                    console.log("Loaded layout from localStorage:", savedLayout.store_name)
-                } catch (error) {
-                    console.error("Error loading layout:", error)
-                }
-            }
+            getSupermarkets()
+                .then((supermarkets) => {
+                    const supermarket = supermarkets[0]
+
+                    if (!supermarket) {
+                        throw new Error("No supermarket found in backend")
+                    }
+
+                    return getSupermarketLayout(supermarket.id)
+                })
+                .then((backendLayout) => {
+                    if (isActive) {
+                        setLayout(mapSupermarketLayoutToEditor(backendLayout))
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error loading backend layout:", error)
+                    setSaveStatus("Could not load backend layout")
+                })
+                .finally(() => {
+                    if (isActive) {
+                        setIsLoadingLayout(false)
+                    }
+                })
         }
 
         // Load settings
@@ -96,6 +120,9 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
             } catch (error) {
                 console.error("Error loading settings:", error)
             }
+        }
+        return () => {
+            isActive = false
         }
     }, [initialLayout])
 
@@ -287,41 +314,31 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
         }))
     }
 
-    const handleSave = () => {
+    const handleSave = async () => {
         try {
-            // Get existing layouts from localStorage
-            const savedLayoutsStr = localStorage.getItem('savedLayouts')
-            const savedLayouts = savedLayoutsStr ? JSON.parse(savedLayoutsStr) : []
+            setSaveStatus("Saving layout...")
+            const savedLayout = await saveSupermarketLayout(layout.store_id, layout)
+            setLayout(mapSupermarketLayoutToEditor(savedLayout))
+            const update = JSON.stringify({
+                supermarketId: savedLayout.id,
+                updatedAt: Date.now(),
+            })
+            localStorage.setItem("aisly-layout-updated", update)
+            window.dispatchEvent(new CustomEvent("aisly-layout-saved", {
+                detail: { supermarketId: savedLayout.id },
+            }))
 
-            // Create layout entry with metadata
-            const layoutEntry = {
-                id: layout.store_id || `layout_${Date.now()}`,
-                name: layout.store_name || 'Unnamed Layout',
-                lastModified: new Date().toISOString().split('T')[0],
-                shelves: layout.shelves.length,
-                data: layout
+            if ("BroadcastChannel" in window) {
+                const channel = new BroadcastChannel("aisly-layout")
+                channel.postMessage({ type: "layout-saved", supermarketId: savedLayout.id })
+                channel.close()
             }
 
-            // Check if layout already exists (update) or is new (add)
-            const existingIndex = savedLayouts.findIndex((l: any) => l.id === layoutEntry.id)
-            if (existingIndex >= 0) {
-                savedLayouts[existingIndex] = layoutEntry
-            } else {
-                savedLayouts.unshift(layoutEntry) // Add to beginning
-            }
-
-            // Keep only last 10 layouts
-            const trimmedLayouts = savedLayouts.slice(0, 10)
-
-            // Save to localStorage
-            localStorage.setItem('savedLayouts', JSON.stringify(trimmedLayouts))
-            localStorage.setItem('currentLayout', JSON.stringify(layout))
-
-            alert("✅ Layout saved successfully!")
-            console.log("Saved layout:", layoutEntry)
+            setSaveStatus("Layout saved to backend")
+            setTimeout(() => setSaveStatus(null), 2500)
         } catch (error) {
             console.error("Error saving layout:", error)
-            alert("❌ Failed to save layout")
+            setSaveStatus("Failed to save layout")
         }
     }
 
@@ -447,6 +464,18 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
 
     return (
         <div className="flex h-screen w-full bg-gray-100">
+            {isLoadingLayout && (
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80">
+                    <div className="rounded-xl border border-gray-200 bg-white px-5 py-4 text-sm font-medium text-gray-700 shadow-lg">
+                        Loading layout from backend...
+                    </div>
+                </div>
+            )}
+            {saveStatus && (
+                <div className="absolute left-1/2 top-4 z-50 -translate-x-1/2 rounded-xl border border-emerald-100 bg-white px-4 py-2 text-sm font-semibold text-emerald-700 shadow-lg">
+                    {saveStatus}
+                </div>
+            )}
             {/* Left Panel */}
             <EditorControls
                 editorState={editorState}

@@ -4,8 +4,9 @@ import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Locate, ZoomIn, ZoomOut } from 'lucide-react';
 import { UserAvatar } from './UserAvatar';
+import { RouteRenderer } from './RouteRenderer';
 import { ShoppingListItem, UserPosition } from '@/types/customer';
-import { Shelf, Freezer, SpecialZone, Checkout, EntryExit, Wall } from '@/types/supermarket';
+import { Shelf, Freezer, SpecialZone, Checkout, EntryExit, Wall, Position } from '@/types/supermarket';
 
 interface SupermarketMapProps {
     storeWidth: number;
@@ -20,6 +21,7 @@ interface SupermarketMapProps {
     userPosition: UserPosition;
     shoppingListItems: ShoppingListItem[];
     highlightedItem?: ShoppingListItem | null;
+    routePath?: Position[];
 }
 
 export const SupermarketMap: React.FC<SupermarketMapProps> = ({
@@ -35,6 +37,7 @@ export const SupermarketMap: React.FC<SupermarketMapProps> = ({
     userPosition,
     shoppingListItems,
     highlightedItem,
+    routePath = [],
 }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const [zoom, setZoom] = useState(1);
@@ -487,6 +490,14 @@ export const SupermarketMap: React.FC<SupermarketMapProps> = ({
                 {entryExit.map(renderEntryExit)}
 
                 {/* Layer 4: Product markers */}
+                <RouteRenderer
+                    path={routePath}
+                    start={routePath[0]}
+                    end={routePath[routePath.length - 1]}
+                    color="#0f766e"
+                    strokeWidth={0.22}
+                    showMarkers
+                />
                 {renderProductMarkers()}
 
                 {/* Layer 5: User avatar (always on top) */}
