@@ -172,7 +172,7 @@ export default function ShopPage() {
                 <div className="flex items-center justify-center h-full">
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-4" />
-                        <p className="text-gray-500 font-medium">Cargando mapa del supermercado...</p>
+                        <p className="text-gray-500 font-medium">Loading supermarket map...</p>
                     </div>
                 </div>
             );
@@ -221,15 +221,23 @@ export default function ShopPage() {
 
     return (
         <div className="flex flex-col h-screen bg-gradient-to-b from-slate-50 to-gray-100">
-            {/* Header */}
             <header className="bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-3 flex items-center justify-between sticky top-0 z-20 shadow-md">
                 <div className="flex items-center gap-3">
-                    <div className="bg-white/20 rounded-lg p-1.5">
-                        <ShoppingCart className="h-5 w-5 text-white" />
+                    <div className="bg-white/20 rounded-lg p-1.5 flex items-center justify-center">
+                        <img 
+                            src="/aisly-logo.svg" 
+                            alt="Aisly Logo" 
+                            style={{
+                                width: 24,
+                                height: 24,
+                                objectFit: "contain",
+                                filter: "brightness(0) invert(1)",
+                            }} 
+                        />
                     </div>
                     <div>
                         <h1 className="text-lg font-bold text-white">Aisly Market</h1>
-                        <p className="text-xs text-emerald-100">Tu asistente de compras inteligente</p>
+                        <p className="text-xs text-emerald-100">Your smart shopping assistant</p>
                     </div>
                 </div>
                 {shoppingList.length > 0 && (
@@ -251,10 +259,10 @@ export default function ShopPage() {
                     className={`flex flex-col items-center gap-0.5 px-5 py-1.5 rounded-xl transition-all ${activeTab === 'search'
                         ? 'text-emerald-600 bg-emerald-50'
                         : 'text-gray-500 hover:text-gray-700'
-                    }`}
+                        }`}
                 >
                     <Search className="h-5 w-5" />
-                    <span className="text-[11px] font-semibold">Buscar</span>
+                    <span className="text-[11px] font-semibold">Search</span>
                 </button>
 
                 <button
@@ -262,10 +270,10 @@ export default function ShopPage() {
                     className={`flex flex-col items-center gap-0.5 px-5 py-1.5 rounded-xl transition-all relative ${activeTab === 'list'
                         ? 'text-emerald-600 bg-emerald-50'
                         : 'text-gray-500 hover:text-gray-700'
-                    }`}
+                        }`}
                 >
                     <List className="h-5 w-5" />
-                    <span className="text-[11px] font-semibold">Mi Lista</span>
+                    <span className="text-[11px] font-semibold">My List</span>
                     {shoppingList.length > 0 && (
                         <span className="absolute -top-0.5 right-1 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-bold">
                             {shoppingList.length}
@@ -278,10 +286,10 @@ export default function ShopPage() {
                     className={`flex flex-col items-center gap-0.5 px-5 py-1.5 rounded-xl transition-all ${activeTab === 'map'
                         ? 'text-emerald-600 bg-emerald-50'
                         : 'text-gray-500 hover:text-gray-700'
-                    }`}
+                        }`}
                 >
                     <Map className="h-5 w-5" />
-                    <span className="text-[11px] font-semibold">Mapa</span>
+                    <span className="text-[11px] font-semibold">Map</span>
                 </button>
             </nav>
 

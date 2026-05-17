@@ -472,18 +472,24 @@ export const SupermarketMap: React.FC<SupermarketMapProps> = ({
                     rx={0.3}
                 />
 
-                {/* Store elements */}
-                {shelves.map(renderShelf)}
-                {freezers.map(renderFreezer)}
+                {/* Store elements - Order matters! First = Behind, Last = Front */}
+
+                {/* Layer 1: Background elements (furthest back) */}
                 {specialZones.map(renderSpecialZone)}
-                {checkouts.map(renderCheckout)}
-                {entryExit.map(renderEntryExit)}
+
+                {/* Layer 2: Walls */}
                 {walls.map(renderWall)}
 
-                {/* Product markers */}
+                {/* Layer 3: Main store fixtures */}
+                {shelves.map(renderShelf)}
+                {freezers.map(renderFreezer)}
+                {checkouts.map(renderCheckout)}
+                {entryExit.map(renderEntryExit)}
+
+                {/* Layer 4: Product markers */}
                 {renderProductMarkers()}
 
-                {/* User avatar */}
+                {/* Layer 5: User avatar (always on top) */}
                 <UserAvatar x={userPosition.x} y={userPosition.y} />
             </svg>
 
@@ -513,15 +519,15 @@ export const SupermarketMap: React.FC<SupermarketMapProps> = ({
             <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-2 rounded-xl shadow-lg text-xs border border-gray-100">
                 <div className="flex items-center gap-2 mb-1">
                     <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                    <span className="text-gray-700">Productos en lista</span>
+                    <span className="text-gray-700">Products in list</span>
                 </div>
                 <div className="flex items-center gap-2 mb-1">
                     <div className="w-3 h-3 rounded-full bg-sky-500" />
-                    <span className="text-gray-700">Congeladores</span>
+                    <span className="text-gray-700">Freezers</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-blue-500 border-2 border-white shadow-sm" />
-                    <span className="text-gray-700">Tu ubicación</span>
+                    <span className="text-gray-700">Your location</span>
                 </div>
             </div>
         </div>

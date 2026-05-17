@@ -2,6 +2,7 @@
 
 import { useRef, useState, useCallback, useEffect } from "react"
 import { Shelf, Freezer, SpecialZone, Checkout, EntryExit, Wall, Position, EditorState } from "@/types/supermarket"
+import { ColorSettings } from "@/types/settings"
 
 interface GridCanvasProps {
     storeWidth: number
@@ -28,6 +29,8 @@ interface GridCanvasProps {
     routeStart?: Position | null
     routeEnd?: Position | null
     onNavigateClick?: (pos: Position) => void
+    // Custom colors
+    colors?: ColorSettings
 }
 
 export function GridCanvas({
@@ -54,6 +57,7 @@ export function GridCanvas({
     routeStart = null,
     routeEnd = null,
     onNavigateClick,
+    colors,
 }: GridCanvasProps) {
     const svgRef = useRef<SVGSVGElement>(null)
     const [isDragging, setIsDragging] = useState(false)
@@ -226,6 +230,9 @@ export function GridCanvas({
         }
     }, [isDragging, isPanning, handleMouseMove, handleMouseUp])
 
+    const brandColor = colors?.brandColor || "#10b981"
+    const mapFloor = colors?.mapFloor || "#f8fafc"
+
     const renderPath = () => {
         if (routePath.length < 2 && !routeStart && !routeEnd) return null
 
@@ -240,7 +247,7 @@ export function GridCanvas({
                     <polyline
                         points={polylinePoints}
                         fill="none"
-                        stroke="#3b82f6"
+                        stroke={brandColor}
                         strokeWidth={0.25}
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -257,7 +264,7 @@ export function GridCanvas({
                             cy={routeStart.y + 0.5}
                             r={0.55}
                             fill="#10b981"
-                            stroke="#fff"
+                            stroke={mapFloor}
                             strokeWidth={0.12}
                         />
                         <text
@@ -283,7 +290,7 @@ export function GridCanvas({
                             cy={routeEnd.y + 0.5}
                             r={0.55}
                             fill="#ef4444"
-                            stroke="#fff"
+                            stroke={mapFloor}
                             strokeWidth={0.12}
                         />
                         <text
@@ -348,6 +355,7 @@ export function GridCanvas({
 
     const renderShelf = (shelf: Shelf) => {
         const isSelected = selectedElement === shelf.id
+
         return (
             <g
                 key={shelf.id}
@@ -360,7 +368,7 @@ export function GridCanvas({
                     width={shelf.dimensions.width}
                     height={shelf.dimensions.height}
                     fill={isSelected ? "#fef3c7" : "#8b5e3c"}
-                    stroke={isSelected ? "#3b82f6" : "#6b4226"}
+                    stroke={isSelected ? brandColor : "#6b4226"}
                     strokeWidth={isSelected ? 0.15 : 0.08}
                     rx={0.1}
                 />
@@ -382,6 +390,7 @@ export function GridCanvas({
 
     const renderFreezer = (freezer: Freezer) => {
         const isSelected = selectedElement === freezer.id
+
         return (
             <g
                 key={freezer.id}
@@ -394,11 +403,10 @@ export function GridCanvas({
                     width={freezer.dimensions.width}
                     height={freezer.dimensions.height}
                     fill={isSelected ? "#dbeafe" : "#0ea5e9"}
-                    stroke={isSelected ? "#3b82f6" : "#0369a1"}
+                    stroke={isSelected ? brandColor : "#0369a1"}
                     strokeWidth={isSelected ? 0.15 : 0.08}
                     rx={0.15}
                 />
-                {/* Frost pattern lines */}
                 <line
                     x1={freezer.position.x + freezer.dimensions.width * 0.2}
                     y1={freezer.position.y + freezer.dimensions.height * 0.3}
@@ -433,13 +441,14 @@ export function GridCanvas({
 
     const renderSpecialZone = (zone: SpecialZone) => {
         const isSelected = selectedElement === zone.id
+
         const zoneColors: Record<string, { fill: string; stroke: string }> = {
             produce_section: { fill: "#d1fae5", stroke: "#10b981" },
             deli_section: { fill: "#fef3c7", stroke: "#f59e0b" },
             bakery_section: { fill: "#fce7f3", stroke: "#ec4899" },
             pharmacy_section: { fill: "#dbeafe", stroke: "#3b82f6" },
         }
-        const colors = zoneColors[zone.type] || { fill: "#f3f4f6", stroke: "#9ca3af" }
+        const zoneColor = zoneColors[zone.type] || { fill: "#f3f4f6", stroke: "#9ca3af" }
 
         return (
             <g
@@ -452,8 +461,8 @@ export function GridCanvas({
                     y={zone.position.y}
                     width={zone.dimensions.width}
                     height={zone.dimensions.height}
-                    fill={isSelected ? "#dbeafe" : colors.fill}
-                    stroke={isSelected ? "#3b82f6" : colors.stroke}
+                    fill={isSelected ? "#dbeafe" : zoneColor.fill}
+                    stroke={isSelected ? brandColor : zoneColor.stroke}
                     strokeWidth={isSelected ? 0.15 : 0.08}
                     rx={0.15}
                     strokeDasharray={isSelected ? "none" : "0.3 0.15"}
@@ -476,6 +485,7 @@ export function GridCanvas({
 
     const renderCheckout = (checkout: Checkout) => {
         const isSelected = selectedElement === checkout.id
+
         return (
             <g
                 key={checkout.id}
@@ -488,7 +498,7 @@ export function GridCanvas({
                     width={checkout.dimensions.width}
                     height={checkout.dimensions.height}
                     fill={isSelected ? "#dbeafe" : "#bfdbfe"}
-                    stroke={isSelected ? "#3b82f6" : "#60a5fa"}
+                    stroke={isSelected ? brandColor : "#60a5fa"}
                     strokeWidth={isSelected ? 0.15 : 0.08}
                     rx={0.1}
                 />
@@ -525,7 +535,7 @@ export function GridCanvas({
                     width={point.dimensions.width}
                     height={point.dimensions.height}
                     fill={color}
-                    stroke={isSelected ? "#3b82f6" : strokeColor}
+                    stroke={isSelected ? brandColor : strokeColor}
                     strokeWidth={isSelected ? 0.15 : 0.08}
                     rx={0.1}
                 />
@@ -547,6 +557,7 @@ export function GridCanvas({
 
     const renderWall = (wall: Wall) => {
         const isSelected = selectedElement === wall.id
+
         return (
             <g
                 key={wall.id}
@@ -559,7 +570,7 @@ export function GridCanvas({
                     width={wall.dimensions.width}
                     height={wall.dimensions.height}
                     fill={isSelected ? "#dbeafe" : "#6b7280"}
-                    stroke={isSelected ? "#3b82f6" : "#374151"}
+                    stroke={isSelected ? brandColor : "#374151"}
                     strokeWidth={isSelected ? 0.15 : 0.1}
                     rx={0.05}
                 />
@@ -576,10 +587,10 @@ export function GridCanvas({
                 cursor: mode === "navigate"
                     ? "crosshair"
                     : isPanning
-                    ? "grabbing"
-                    : selectedTool !== "select"
-                    ? "crosshair"
-                    : "default",
+                        ? "grabbing"
+                        : selectedTool !== "select"
+                            ? "crosshair"
+                            : "default",
             }}
         >
             <svg
@@ -610,10 +621,10 @@ export function GridCanvas({
                     cursor: mode === "navigate"
                         ? "crosshair"
                         : isPanning
-                        ? "grabbing"
-                        : selectedTool !== "select"
-                        ? "crosshair"
-                        : "default",
+                            ? "grabbing"
+                            : selectedTool !== "select"
+                                ? "crosshair"
+                                : "default",
                 }}
             >
                 {/* Full background — clickable for deselect/place */}
@@ -633,7 +644,7 @@ export function GridCanvas({
                     y={0}
                     width={storeWidth}
                     height={storeHeight}
-                    fill="#ffffff"
+                    fill={mapFloor}
                     stroke="#94a3b8"
                     strokeWidth={0.1}
                 />
@@ -642,13 +653,19 @@ export function GridCanvas({
                 {renderGrid()}
 
                 {/* Store elements — pointer-events disabled in navigate mode */}
+                {/* Layer order: First = Behind, Last = Front */}
                 <g style={{ pointerEvents: mode === "navigate" ? "none" : "auto" }}>
+                    {/* Layer 1: Background elements (special zones always behind) */}
+                    {specialZones.map(renderSpecialZone)}
+
+                    {/* Layer 2: Walls */}
+                    {walls.map(renderWall)}
+
+                    {/* Layer 3: Main fixtures (shelves, freezers, checkouts, entry/exit) */}
                     {shelves.map(renderShelf)}
                     {freezers.map(renderFreezer)}
-                    {specialZones.map(renderSpecialZone)}
                     {checkouts.map(renderCheckout)}
                     {entryExit.map(renderEntryExit)}
-                    {walls.map(renderWall)}
                 </g>
 
                 {/* Pathfinding overlay */}
