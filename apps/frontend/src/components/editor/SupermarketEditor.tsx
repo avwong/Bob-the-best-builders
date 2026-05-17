@@ -108,7 +108,7 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
         zoom: 1,
     })
 
-    // ── Navigate mode ────────────────────────────────────────────────────────
+    // Navigate mode
     const [mode, setMode] = useState<"edit" | "navigate">("edit")
     const [routeStart, setRouteStart] = useState<Position | null>(null)
     const [routeEnd, setRouteEnd] = useState<Position | null>(null)
@@ -145,7 +145,7 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
         const gridX = Math.max(0, Math.min(width - 1, Math.floor(position.x)))
         const gridY = Math.max(0, Math.min(height - 1, Math.floor(position.y)))
 
-        // No start yet — first click sets it
+        // No start yet, first click sets it
         if (!routeStart) {
             if (grid[gridY]?.[gridX]) {
                 setRouteStart({ x: gridX, y: gridY })
@@ -153,7 +153,7 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
             return
         }
 
-        // Start is set — compute route to clicked cell
+        // Start is set, compute route to clicked cell
         let end = { x: gridX, y: gridY }
         if (!grid[end.y]?.[end.x]) {
             const nearby = findNearestWalkable(grid, end, width, height)
@@ -175,7 +175,7 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
         setRouteResult(null)
     }
 
-    // ── Editor handlers ──────────────────────────────────────────────────────
+    // Editor handlers
     const updateEditorState = (updates: Partial<EditorState>) => {
         setEditorState((prev) => ({ ...prev, ...updates }))
     }
@@ -462,7 +462,7 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
                 onUpdateStoreDimensions={handleUpdateStoreDimensions}
             />
 
-            {/* Center – Canvas */}
+            {/* Center canvas */}
             <div className="flex-1 p-4 overflow-hidden relative">
 
                 {/* Navigate Mode HUD */}
@@ -545,7 +545,7 @@ export function SupermarketEditor({ initialLayout }: SupermarketEditorProps) {
                 </div>
             </div>
 
-            {/* Right Panel – hidden in navigate mode */}
+            {/* Right panel hidden in navigate mode */}
             {mode === "edit" && (
                 <PropertiesPanel
                     selectedElement={getSelectedElement()}

@@ -35,7 +35,7 @@ export default function Dashboard() {
         <div className="min-h-screen" style={{ background: "linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 30%, #f0f9ff 100%)" }}>
             <div className="max-w-6xl mx-auto px-6 py-10">
 
-                {/* Hero / Branding — left aligned */}
+                {/* Hero / Branding, left aligned */}
                 <div className="mb-12" style={{ animation: "fadeInUp 0.6s ease-out" }}>
                     <div className="flex items-center gap-3 mb-3">
                         <div style={{
@@ -74,14 +74,14 @@ export default function Dashboard() {
                         maxWidth: 480,
                         lineHeight: 1.6,
                     }}>
-                        Indoor Supermarket Navigation — create layouts, manage products, and guide your customers.
+                        Indoor Supermarket Navigation - create layouts, manage products, and guide your customers.
                     </p>
                 </div>
 
                 {/* Quick Actions Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
 
-                    {/* Customer View — Primary */}
+                    {/* Customer View, Primary */}
                     <button
                         onClick={() => router.push("/shop")}
                         className="group text-left rounded-2xl p-6 transition-all duration-300"
@@ -352,7 +352,7 @@ export default function Dashboard() {
                 {/* Footer */}
                 <div className="text-center mt-10">
                     <p style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
-                        Aisly — Indoor Supermarket Navigation • Built by Bob the Best Builders
+                        Aisly - Indoor Supermarket Navigation • Built by Bob the Best Builders
                     </p>
                 </div>
             </div>

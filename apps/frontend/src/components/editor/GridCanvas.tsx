@@ -64,7 +64,7 @@ export function GridCanvas({
     const [draggedElement, setDraggedElement] = useState<string | null>(null)
     const [dragOffset, setDragOffset] = useState<Position>({ x: 0, y: 0 })
 
-    // Pan state — stored in SVG coordinate space
+    // Pan state stored in SVG coordinate space
     const [isPanning, setIsPanning] = useState(false)
     const [panStart, setPanStart] = useState<Position>({ x: 0, y: 0 })
     const [viewOrigin, setViewOrigin] = useState<Position>({ x: -2, y: -2 })
@@ -101,7 +101,7 @@ export function GridCanvas({
         return { x: svgP.x, y: svgP.y }
     }, [])
 
-    // Mouse wheel zoom — zoom towards cursor position
+    // Mouse wheel zoom towards cursor position
     const handleWheel = useCallback((e: WheelEvent) => {
         e.preventDefault()
         const delta = e.deltaY > 0 ? -0.1 : 0.1
@@ -627,7 +627,7 @@ export function GridCanvas({
                                 : "default",
                 }}
             >
-                {/* Full background — clickable for deselect/place */}
+                {/* Full background, clickable for deselect/place */}
                 <rect
                     data-bg="true"
                     x={viewOrigin.x - 100}
@@ -652,7 +652,7 @@ export function GridCanvas({
                 {/* Grid */}
                 {renderGrid()}
 
-                {/* Store elements — pointer-events disabled in navigate mode */}
+                {/* Store elements with pointer events disabled in navigate mode */}
                 {/* Layer order: First = Behind, Last = Front */}
                 <g style={{ pointerEvents: mode === "navigate" ? "none" : "auto" }}>
                     {/* Layer 1: Background elements (special zones always behind) */}

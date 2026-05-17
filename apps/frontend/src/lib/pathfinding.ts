@@ -306,7 +306,7 @@ export function findPathEnhanced(
 export function createGridFromLayout(layout: StoreLayout): Grid {
   const { width, height } = layout.dimensions;
 
-  // Initialize grid — all cells walkable by default
+  // Initialize grid with all cells walkable by default
   const grid: Grid = Array(height)
     .fill(null)
     .map(() => Array(width).fill(true));

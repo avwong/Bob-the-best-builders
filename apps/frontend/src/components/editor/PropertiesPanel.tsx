@@ -48,7 +48,7 @@ export function PropertiesPanel({
         <div className="w-80 h-full overflow-y-auto bg-white border-l border-gray-200 p-4 space-y-4">
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-lg text-gray-900">Properties — {elementTypeName}</CardTitle>
+                    <CardTitle className="text-lg text-gray-900">Properties - {elementTypeName}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {/* Common Properties */}

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Aisly — Indoor Supermarket Navigation",
+  title: "Aisly - Indoor Supermarket Navigation",
   description: "Navigate your supermarket efficiently with Aisly",
 };
 
