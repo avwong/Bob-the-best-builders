@@ -232,7 +232,6 @@ MIT License - see [LICENSE](LICENSE) file for details
 
 For questions or issues:
 - Check the [Documentation](docs/)
-- Review [Project Status](docs/PROJECT_STATUS_AND_TEAM_TASKS.md)
 - Open an issue on GitHub
 
 ---
