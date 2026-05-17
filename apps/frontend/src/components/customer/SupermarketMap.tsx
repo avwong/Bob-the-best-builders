@@ -1,11 +1,15 @@
 'use client';
 
-import React, { useRef, useState, useCallback, useEffect } from 'react';
+import React, { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
-import { Locate, ZoomIn, ZoomOut } from 'lucide-react';
+import { Locate, ZoomIn, ZoomOut, Navigation } from 'lucide-react';
 import { UserAvatar } from './UserAvatar';
+import { RouteRenderer } from './RouteRenderer';
 import { ShoppingListItem, UserPosition } from '@/types/customer';
 import { Shelf, Freezer, SpecialZone, Checkout, EntryExit, Wall } from '@/types/supermarket';
+import { createGridFromLayout } from '@/lib/pathfinding';
+import { optimizeShoppingRoute, combineSegmentPaths, ProductWithLocation } from '@/lib/routeOptimization';
+import { Position } from '@/lib/types';
 
 interface SupermarketMapProps {
     storeWidth: number;
@@ -42,11 +46,60 @@ export const SupermarketMap: React.FC<SupermarketMapProps> = ({
     const [isPanning, setIsPanning] = useState(false);
     const [panStart, setPanStart] = useState({ x: 0, y: 0 });
     const [touchStartDistance, setTouchStartDistance] = useState<number | null>(null);
+    const [showRoute, setShowRoute] = useState(true);
 
     const padding = 2;
     const viewWidth = (storeWidth + padding * 2) / zoom;
     const viewHeight = (storeHeight + padding * 2) / zoom;
     const viewBox = `${viewOrigin.x} ${viewOrigin.y} ${viewWidth} ${viewHeight}`;
+
+    // Calculate optimized route for shopping list
+    const optimizedRoute = useMemo(() => {
+        // Only calculate if we have unchecked items with locations
+        const uncheckedItems = shoppingListItems.filter(item => !item.checked && item.location);
+        
+        if (uncheckedItems.length === 0) {
+            return null;
+        }
+
+        // Create grid from layout
+        const grid = createGridFromLayout({
+            store_id: 'current',
+            store_name: 'Current Store',
+            version: '1.0',
+            dimensions: { width: storeWidth, height: storeHeight, unit: 'meters' },
+            grid: { cell_size: 1, walkable_paths: [] },
+            shelves: shelves,
+            freezers: freezers,
+            special_zones: specialZones,
+            checkouts: checkouts,
+            entry_exit: entryExit,
+            walls: walls,
+        });
+
+        // Convert shopping list items to products with locations
+        const products: ProductWithLocation[] = uncheckedItems.map(item => ({
+            id: item.id,
+            name: item.productName,
+            position: item.location!,
+        }));
+
+        // Calculate optimized route
+        const route = optimizeShoppingRoute(grid, userPosition, products);
+        
+        if (!route.success) {
+            return null;
+        }
+
+        // Combine all segment paths into one continuous path
+        const fullPath = combineSegmentPaths(route.segments);
+
+        return {
+            path: fullPath,
+            distance: route.totalDistance,
+            estimatedTime: route.totalTime,
+        };
+    }, [shoppingListItems, userPosition, storeWidth, storeHeight, shelves, walls]);
 
     // Convert screen coordinates to SVG coordinates
     const getSVGPoint = useCallback((clientX: number, clientY: number) => {
@@ -483,6 +536,20 @@ export const SupermarketMap: React.FC<SupermarketMapProps> = ({
                 {/* Product markers */}
                 {renderProductMarkers()}
 
+                {/* Optimized route */}
+                {showRoute && optimizedRoute && optimizedRoute.path.length > 0 && (
+                    <RouteRenderer
+                        path={optimizedRoute.path}
+                        animate={true}
+                        animationDuration={2000}
+                        color="#3b82f6"
+                        strokeWidth={0.3}
+                        showMarkers={true}
+                        distance={optimizedRoute.distance}
+                        estimatedTime={optimizedRoute.estimatedTime}
+                    />
+                )}
+
                 {/* User avatar */}
                 <UserAvatar x={userPosition.x} y={userPosition.y} />
             </svg>
@@ -492,21 +559,38 @@ export const SupermarketMap: React.FC<SupermarketMapProps> = ({
                 <button
                     onClick={handleZoomIn}
                     className="bg-white shadow-lg rounded-lg p-2 hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-200"
+                    title="Zoom in"
                 >
                     <ZoomIn className="h-5 w-5 text-gray-700" />
                 </button>
                 <button
                     onClick={handleZoomOut}
                     className="bg-white shadow-lg rounded-lg p-2 hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-200"
+                    title="Zoom out"
                 >
                     <ZoomOut className="h-5 w-5 text-gray-700" />
                 </button>
                 <button
                     onClick={centerOnUser}
                     className="bg-emerald-500 shadow-lg rounded-lg p-2 hover:bg-emerald-600 active:bg-emerald-700 transition-colors"
+                    title="Center on me"
                 >
                     <Locate className="h-5 w-5 text-white" />
                 </button>
+                {/* Route toggle button */}
+                {optimizedRoute && (
+                    <button
+                        onClick={() => setShowRoute(!showRoute)}
+                        className={`shadow-lg rounded-lg p-2 transition-colors border ${
+                            showRoute
+                                ? 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700 border-blue-600'
+                                : 'bg-white hover:bg-gray-50 active:bg-gray-100 border-gray-200'
+                        }`}
+                        title={showRoute ? 'Hide route' : 'Show route'}
+                    >
+                        <Navigation className={`h-5 w-5 ${showRoute ? 'text-white' : 'text-gray-700'}`} />
+                    </button>
+                )}
             </div>
 
             {/* Legend */}
@@ -519,11 +603,39 @@ export const SupermarketMap: React.FC<SupermarketMapProps> = ({
                     <div className="w-3 h-3 rounded-full bg-sky-500" />
                     <span className="text-gray-700">Congeladores</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mb-1">
                     <div className="w-3 h-3 rounded-full bg-blue-500 border-2 border-white shadow-sm" />
                     <span className="text-gray-700">Tu ubicación</span>
                 </div>
+                {showRoute && optimizedRoute && (
+                    <div className="flex items-center gap-2 pt-1 mt-1 border-t border-gray-200">
+                        <div className="w-3 h-0.5 bg-blue-500" />
+                        <span className="text-gray-700">Ruta optimizada</span>
+                    </div>
+                )}
             </div>
+
+            {/* Route info card */}
+            {showRoute && optimizedRoute && (
+                <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-4 py-3 rounded-xl shadow-lg border border-gray-100 max-w-xs">
+                    <div className="flex items-center gap-2 mb-2">
+                        <Navigation className="h-4 w-4 text-blue-500" />
+                        <h3 className="text-sm font-semibold text-gray-800">Ruta Optimizada</h3>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <div className="text-gray-500">Distancia</div>
+                            <div className="text-lg font-bold text-blue-600">{optimizedRoute.distance.toFixed(1)}m</div>
+                        </div>
+                        <div>
+                            <div className="text-gray-500">Tiempo est.</div>
+                            <div className="text-lg font-bold text-green-600">
+                                {Math.ceil(optimizedRoute.estimatedTime / 60)}:{(Math.ceil(optimizedRoute.estimatedTime) % 60).toString().padStart(2, '0')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
