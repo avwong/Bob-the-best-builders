@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductResponseDto, ProductWithAisleDto, PaginatedProductsDto } from './dto/product-response.dto';
 
 @Injectable()
@@ -27,6 +28,51 @@ export class ProductsService {
     });
 
     return this.mapToResponseDto(product);
+  }
+
+  async update(id: string, updateProductDto: UpdateProductDto): Promise<ProductResponseDto> {
+    const existingProduct = await this.prisma.product.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+
+    if (!existingProduct) {
+      throw new NotFoundException(`Product with ID ${id} not found`);
+    }
+
+    const product = await this.prisma.product.update({
+      where: { id },
+      data: {
+        name: updateProductDto.name,
+        barcode: updateProductDto.barcode,
+        category: updateProductDto.category,
+        supermarketId: updateProductDto.supermarketId,
+        aisleId: updateProductDto.aisleId,
+        aisleNumber: updateProductDto.aisleNumber,
+        aisleSegment: updateProductDto.aisleSegment,
+        shelfSide: updateProductDto.shelfSide,
+        shelfSection: updateProductDto.shelfSection,
+        gridX: updateProductDto.gridX,
+        gridY: updateProductDto.gridY,
+        price: updateProductDto.price,
+        imageUrl: updateProductDto.imageUrl,
+      },
+    });
+
+    return this.mapToResponseDto(product);
+  }
+
+  async remove(id: string): Promise<void> {
+    const existingProduct = await this.prisma.product.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+
+    if (!existingProduct) {
+      throw new NotFoundException(`Product with ID ${id} not found`);
+    }
+
+    await this.prisma.product.delete({ where: { id } });
   }
 
   async findAll(

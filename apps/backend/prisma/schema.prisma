@@ -16,10 +16,33 @@ model Supermarket {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // Relations
-  aisles   Aisle[]
-  products Product[]
+  aisles         Aisle[]
+  products       Product[]
+  layoutElements LayoutElement[]
 
   @@map("supermarkets")
+}
+
+// LayoutElement table - stores editor/customer-map fixtures not represented by aisles
+model LayoutElement {
+  id            String            @id
+  supermarketId String            @map("supermarket_id")
+  type          LayoutElementType
+  label         String?
+  category      String?
+  positionX     Int               @map("position_x")
+  positionY     Int               @map("position_y")
+  width         Int
+  height        Int
+  orientation   String?
+  metadata      Json?
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+
+  supermarket Supermarket @relation(fields: [supermarketId], references: [id], onDelete: Cascade)
+
+  @@index([supermarketId])
+  @@map("layout_elements")
 }
 
 // Aisle table - stores aisle information and positioning
@@ -84,4 +107,14 @@ enum ShelfSection {
   top
   middle
   bottom
+}
+
+enum LayoutElementType {
+  shelf
+  freezer
+  special_zone
+  checkout
+  entrance
+  exit
+  wall
 }
