@@ -9,40 +9,85 @@ interface ProductSearchProps {
     products: Product[];
     onAddToList: (product: Product) => void;
     onShowOnMap?: (product: Product) => void;
+    onSearch?: (query: string) => Promise<Product[]>;
     isLoading?: boolean;
+    error?: string | null;
+}
+
+function filterProducts(products: Product[], query: string) {
+    const normalizedQuery = query.toLowerCase();
+
+    return products.filter(
+        (product) =>
+            product.name.toLowerCase().includes(normalizedQuery) ||
+            product.category.toLowerCase().includes(normalizedQuery)
+    );
 }
 
 export const ProductSearch: React.FC<ProductSearchProps> = ({
     products,
     onAddToList,
     onShowOnMap,
+    onSearch,
     isLoading = false,
+    error = null,
 }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearching, setIsSearching] = useState(false);
+    const [remoteProducts, setRemoteProducts] = useState<Product[]>([]);
+    const [searchError, setSearchError] = useState<string | null>(null);
     const [addedProducts, setAddedProducts] = useState<Set<string>>(new Set());
 
     const filteredProducts = useMemo(() => {
         if (!searchQuery.trim()) return [];
+        return onSearch ? remoteProducts : filterProducts(products, searchQuery);
+    }, [searchQuery, products, onSearch, remoteProducts]);
 
-        const query = searchQuery.toLowerCase();
-        return products.filter(
-            (product) =>
-                product.name.toLowerCase().includes(query) ||
-                product.category.toLowerCase().includes(query)
-        );
-    }, [searchQuery, products]);
-
-    // Simulate search delay for better UX
     useEffect(() => {
-        if (searchQuery.trim()) {
+        const query = searchQuery.trim();
+
+        if (!query) {
+            setRemoteProducts([]);
+            setSearchError(null);
+            setIsSearching(false);
+            return;
+        }
+
+        if (!onSearch) {
             setIsSearching(true);
             const timer = setTimeout(() => setIsSearching(false), 300);
             return () => clearTimeout(timer);
-        } else {
-            setIsSearching(false);
         }
-    }, [searchQuery]);
+
+        let isStale = false;
+        setIsSearching(true);
+        setSearchError(null);
+
+        const timer = setTimeout(() => {
+            onSearch(query)
+                .then((results) => {
+                    if (!isStale) {
+                        setRemoteProducts(results);
+                    }
+                })
+                .catch((err) => {
+                    if (!isStale) {
+                        setSearchError(err instanceof Error ? err.message : 'Search failed');
+                        setRemoteProducts(filterProducts(products, query));
+                    }
+                })
+                .finally(() => {
+                    if (!isStale) {
+                        setIsSearching(false);
+                    }
+                });
+        }, 250);
+
+        return () => {
+            isStale = true;
+            clearTimeout(timer);
+        };
+    }, [searchQuery, onSearch, products]);
 
     const handleAddToList = (product: Product) => {
         onAddToList(product);
@@ -111,6 +156,11 @@ export const ProductSearch: React.FC<ProductSearchProps> = ({
                         <div className="mt-4 text-xs text-gray-400">
                             💡 Tip: Try searching "milk", "bread" or "fruits"
                         </div>
+                        {error && (
+                            <p className="text-xs text-amber-600 mt-4 px-6">
+                                Backend products could not be loaded.
+                            </p>
+                        )}
                     </div>
                 ) : isSearching ? (
                     <div className="text-center mt-12">
@@ -132,6 +182,11 @@ export const ProductSearch: React.FC<ProductSearchProps> = ({
                             <p className="text-sm text-gray-600">
                                 <span className="font-semibold text-emerald-600">{filteredProducts.length}</span> {filteredProducts.length === 1 ? 'result' : 'results'} found
                             </p>
+                            {searchError && (
+                                <p className="text-xs text-amber-600 mt-1">
+                                    Backend search failed. Showing matches from loaded database products.
+                                </p>
+                            )}
                         </div>
                         {filteredProducts.map((product, index) => (
                             <div
@@ -165,7 +220,9 @@ export const ProductSearch: React.FC<ProductSearchProps> = ({
                                             {product.location && (
                                                 <span className="text-xs text-gray-400 flex items-center gap-0.5">
                                                     <MapPin className="h-3 w-3" />
-                                                    Aisle {product.location.x}
+                                                    {product.location.aisleNumber
+                                                        ? `Aisle ${product.location.aisleNumber}`
+                                                        : `Position ${product.location.x}, ${product.location.y}`}
                                                 </span>
                                             )}
                                         </div>

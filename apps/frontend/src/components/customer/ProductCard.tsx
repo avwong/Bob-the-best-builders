@@ -50,7 +50,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                             {product.inStock ? (
                                 <span className="text-xs text-emerald-600 font-medium flex items-center gap-0.5">
                                     <Check className="h-3 w-3" />
-                                    En stock
+                                    In stock
                                 </span>
                             ) : (
                                 <span className="text-xs text-red-500 font-medium">
@@ -129,12 +129,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                     </h3>
 
                     {/* Location */}
-                    {product.location && (product.location.x || product.location.aisleId) && (
+                    {product.location && (product.location.x || product.location.aisleNumber) && (
                         <div className="flex items-center gap-1.5 text-sm text-gray-500">
                             <MapPin className="h-4 w-4 text-gray-400" />
                             <span>
-                                {product.location.aisleId
-                                    ? `Aisle ${product.location.aisleId}`
+                                {product.location.aisleNumber
+                                    ? `Aisle ${product.location.aisleNumber}`
                                     : `Location: (${product.location.x}, ${product.location.y})`}
                             </span>
                         </div>

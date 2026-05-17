@@ -1,127 +1,268 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Search, List, Map, ShoppingCart } from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Search, List, Map } from 'lucide-react';
 import { ProductSearch } from '@/components/customer/ProductSearch';
 import { ShoppingList } from '@/components/customer/ShoppingList';
 import { SupermarketMap } from '@/components/customer/SupermarketMap';
 import { ChatbotButton } from '@/components/customer/ChatbotButton';
-import { MOCK_PRODUCTS } from '@/data/products';
+import type { StoreLayoutForMap } from '@/lib/api';
+import { useProducts } from '@/lib/hooks/useProducts';
+import { useSupermarket } from '@/lib/hooks/useSupermarket';
+import { createGridFromLayout, findPathEnhanced } from '@/lib/pathfinding';
 import { Product, ShoppingListItem, UserPosition } from '@/types/customer';
-import { Shelf, Freezer, SpecialZone, Checkout, EntryExit, Wall } from '@/types/supermarket';
+import type { Position, StoreLayout } from '@/types/supermarket';
 
 type TabView = 'search' | 'list' | 'map';
+
+const aisleSegmentRatios: Record<string, number> = {
+    A: 0.18,
+    B: 0.38,
+    C: 0.62,
+    D: 0.82,
+};
+
+function getProductPositionForLayout(
+    product: Product,
+    layout: StoreLayoutForMap | null
+): { x: number; y: number; label?: string } | undefined {
+    const fallback =
+        product.location.x !== undefined && product.location.y !== undefined
+            ? {
+                x: product.location.x,
+                y: product.location.y,
+                label: product.location.aisleNumber
+                    ? `Aisle ${product.location.aisleNumber}`
+                    : undefined,
+            }
+            : undefined;
+
+    if (!layout || !product.location.aisleNumber) {
+        return fallback;
+    }
+
+    const aisleNumber = product.location.aisleNumber;
+    const shelf = layout.shelves.find((item) => {
+        const numericLabel = Number(String(item.label).match(/\d+/)?.[0]);
+        return numericLabel === aisleNumber;
+    });
+
+    if (!shelf) {
+        return fallback;
+    }
+
+    const segmentRatio =
+        aisleSegmentRatios[String(product.location.aisleSegment || '').toUpperCase()] ?? 0.5;
+    const sideRatio = product.location.shelfSide === 'right' ? 0.75 : 0.25;
+
+    if (shelf.orientation === 'horizontal') {
+        return {
+            x: Math.round(shelf.position.x + shelf.dimensions.width * segmentRatio),
+            y: Math.round(shelf.position.y + shelf.dimensions.height * sideRatio),
+            label: `Aisle ${aisleNumber}`,
+        };
+    }
+
+    return {
+        x: Math.round(shelf.position.x + shelf.dimensions.width * sideRatio),
+        y: Math.round(shelf.position.y + shelf.dimensions.height * segmentRatio),
+        label: `Aisle ${aisleNumber}`,
+    };
+}
+
+function toPathfindingLayout(layout: StoreLayoutForMap): StoreLayout {
+    return {
+        store_id: 'shop-layout',
+        store_name: 'Shop Layout',
+        version: '1.0',
+        dimensions: { ...layout.dimensions, unit: 'meters' },
+        grid: { cell_size: 1, walkable_paths: [] },
+        shelves: layout.shelves,
+        freezers: layout.freezers,
+        special_zones: layout.specialZones,
+        checkouts: layout.checkouts,
+        entry_exit: layout.entryExit,
+        walls: layout.walls,
+    };
+}
+
+function findNearestWalkable(
+    grid: boolean[][],
+    position: Position,
+    width: number,
+    height: number
+): Position | null {
+    const start = {
+        x: Math.max(0, Math.min(width - 1, Math.floor(position.x))),
+        y: Math.max(0, Math.min(height - 1, Math.floor(position.y))),
+    };
+
+    if (grid[start.y]?.[start.x]) {
+        return start;
+    }
+
+    for (let radius = 1; radius <= 8; radius += 1) {
+        for (let dy = -radius; dy <= radius; dy += 1) {
+            for (let dx = -radius; dx <= radius; dx += 1) {
+                if (Math.abs(dx) !== radius && Math.abs(dy) !== radius) {
+                    continue;
+                }
+
+                const x = start.x + dx;
+                const y = start.y + dy;
+
+                if (x >= 0 && x < width && y >= 0 && y < height && grid[y]?.[x]) {
+                    return { x, y };
+                }
+            }
+        }
+    }
+
+    return null;
+}
+
+function buildRoutePath(
+    layout: StoreLayoutForMap | null,
+    userPosition: UserPosition,
+    shoppingList: ShoppingListItem[]
+): Position[] {
+    const remainingItems = shoppingList
+        .filter((item) => item.location && !item.checked)
+        .map((item) => item.location!);
+
+    if (!layout || remainingItems.length === 0) {
+        return [];
+    }
+
+    const pathfindingLayout = toPathfindingLayout(layout);
+    const grid = createGridFromLayout(pathfindingLayout);
+    const { width, height } = pathfindingLayout.dimensions;
+    const start = findNearestWalkable(grid, userPosition, width, height);
+
+    if (!start) {
+        return [];
+    }
+
+    const stops = remainingItems
+        .map((item) => findNearestWalkable(grid, item, width, height))
+        .filter((item): item is Position => Boolean(item));
+
+    const fullPath: Position[] = [start];
+    const unvisited = [...stops];
+    let current = start;
+
+    while (unvisited.length > 0) {
+        let bestIndex = -1;
+        let bestPath: Position[] = [];
+        let bestDistance = Number.POSITIVE_INFINITY;
+
+        unvisited.forEach((stop, index) => {
+            const result = findPathEnhanced(grid, current, stop, {
+                simplifyPath: true,
+                includeTime: true,
+            });
+
+            if (result.found && result.distance < bestDistance) {
+                bestIndex = index;
+                bestPath = result.path;
+                bestDistance = result.distance;
+            }
+        });
+
+        if (bestIndex === -1 || bestPath.length === 0) {
+            break;
+        }
+
+        fullPath.push(...bestPath.slice(1));
+        current = unvisited[bestIndex];
+        unvisited.splice(bestIndex, 1);
+    }
+
+    return fullPath;
+}
 
 export default function ShopPage() {
     const [activeTab, setActiveTab] = useState<TabView>('search');
     const [shoppingList, setShoppingList] = useState<ShoppingListItem[]>([]);
     const [highlightedItem, setHighlightedItem] = useState<ShoppingListItem | null>(null);
-    const [userPosition, setUserPosition] = useState<UserPosition>({ x: 30, y: 2 });
+    const [userPosition] = useState<UserPosition>({ x: 30, y: 2 });
+    const {
+        selectedSupermarket,
+        layout: backendLayout,
+        isLoading: isSupermarketLoading,
+        error: supermarketError,
+    } = useSupermarket();
+    const {
+        products: backendProducts,
+        isLoading: isProductsLoading,
+        error: productsError,
+        searchProducts,
+    } = useProducts({ supermarketId: selectedSupermarket?.id });
 
-    // Store layout data
-    const [storeLayout, setStoreLayout] = useState<{
-        dimensions: { width: number; height: number };
-        shelves: Shelf[];
-        freezers: Freezer[];
-        specialZones: SpecialZone[];
-        checkouts: Checkout[];
-        entryExit: EntryExit[];
-        walls: Wall[];
-    } | null>(null);
+    const products = backendProducts;
+    const storeLayout = backendLayout;
+    const getProductPosition = useCallback(
+        (product: Product) => getProductPositionForLayout(product, storeLayout),
+        [storeLayout]
+    );
 
-    // Load store layout
     useEffect(() => {
-        fetch('/demo-layout.json')
-            .then((res) => res.json())
-            .then((data) => {
-                // Support both old "aisles" key and new "shelves" key
-                const rawShelves = data.shelves || data.aisles || [];
-                const shelves: Shelf[] = rawShelves.map((s: any) => ({
-                    id: s.id,
-                    label: s.label,
-                    type: 'shelf',
-                    position: s.position,
-                    dimensions: s.dimensions,
-                    orientation: s.orientation || 'vertical',
-                    category: s.category || '',
-                    shelves: s.shelves || {
-                        left: { sections: ['top', 'middle', 'bottom'] },
-                        right: { sections: ['top', 'middle', 'bottom'] },
-                    },
-                }));
+        setShoppingList((currentList) =>
+            currentList.map((item) => {
+                const product = products.find((candidate) => candidate.id === item.productId);
+                const location = product ? getProductPosition(product) : item.location;
 
-                const freezers: Freezer[] = (data.freezers || []).map((f: any) => ({
-                    id: f.id,
-                    label: f.label,
-                    type: 'freezer' as const,
-                    position: f.position,
-                    dimensions: f.dimensions,
-                    orientation: f.orientation || 'horizontal',
-                    category: f.category || 'Frozen',
-                }));
-
-                const specialZones: SpecialZone[] = (data.special_zones || []).map((zone: any) => ({
-                    id: zone.id,
-                    label: zone.label,
-                    type: zone.type,
-                    position: zone.position,
-                    dimensions: zone.dimensions,
-                    category: zone.category || '',
-                }));
-
-                const checkouts: Checkout[] = (data.checkouts || []).map((checkout: any) => ({
-                    id: checkout.id,
-                    position: checkout.position,
-                    dimensions: checkout.dimensions,
-                }));
-
-                const entryExit: EntryExit[] = (data.entry_exit || []).map((point: any) => ({
-                    id: point.id,
-                    type: point.type,
-                    position: point.position,
-                    dimensions: point.dimensions,
-                }));
-
-                setStoreLayout({
-                    dimensions: data.dimensions,
-                    shelves,
-                    freezers,
-                    specialZones,
-                    checkouts,
-                    entryExit,
-                    walls: data.walls || [],
-                });
+                return {
+                    ...item,
+                    location,
+                };
             })
-            .catch((error) => {
-                console.error('Error loading store layout:', error);
-            });
-    }, []);
+        );
+    }, [getProductPosition, products]);
+
+    const routePath = useMemo(
+        () => buildRoutePath(storeLayout, userPosition, shoppingList),
+        [shoppingList, storeLayout, userPosition]
+    );
 
     // Add product to shopping list
     const handleAddToList = (product: Product) => {
-        const existingItem = shoppingList.find((item) => item.productId === product.id);
+        setShoppingList((currentList) => {
+            const existingItem = currentList.find((item) => item.productId === product.id);
 
-        if (existingItem) {
-            setShoppingList(
-                shoppingList.map((item) =>
+            if (existingItem) {
+                return currentList.map((item) =>
                     item.productId === product.id
                         ? { ...item, quantity: item.quantity + 1 }
                         : item
-                )
-            );
-        } else {
+                );
+            }
+
             const newItem: ShoppingListItem = {
-                id: `item-${Date.now()}`,
+                id: `item-${Date.now()}-${product.id}`,
                 productId: product.id,
                 productName: product.name,
                 quantity: 1,
                 checked: false,
-                location: product.location.x && product.location.y
-                    ? { x: product.location.x, y: product.location.y }
-                    : undefined,
+                location: getProductPosition(product),
             };
-            setShoppingList([...shoppingList, newItem]);
-        }
+
+            return [...currentList, newItem];
+        });
+    };
+
+    // Toggle item checked status
+    const handleAddCustomItem = (name: string) => {
+        setShoppingList((currentList) => [
+            ...currentList,
+            {
+                id: `custom-${Date.now()}-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+                productId: `custom-${Date.now()}`,
+                productName: name,
+                quantity: 1,
+                checked: false,
+            },
+        ]);
     };
 
     // Toggle item checked status
@@ -160,19 +301,38 @@ export default function ShopPage() {
 
     // Show product on map from search
     const handleShowProductOnMap = (product: Product) => {
-        if (product.location.x && product.location.y) {
+        if (getProductPosition(product)) {
             setActiveTab('map');
         }
     };
 
+    const handleShowRoute = () => {
+        setActiveTab('map');
+    };
+
     // Render active tab content
     const renderTabContent = () => {
+        if (supermarketError) {
+            return (
+                <div className="flex h-full items-center justify-center p-6">
+                    <div className="max-w-sm rounded-xl border border-red-100 bg-white p-5 text-center shadow-sm">
+                        <p className="text-base font-semibold text-gray-900">
+                            Could not load backend supermarket data
+                        </p>
+                        <p className="mt-2 text-sm text-red-600">{supermarketError}</p>
+                    </div>
+                </div>
+            );
+        }
+
         if (!storeLayout) {
             return (
                 <div className="flex items-center justify-center h-full">
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-4" />
-                        <p className="text-gray-500 font-medium">Loading supermarket map...</p>
+                        <p className="text-gray-500 font-medium">
+                            {isSupermarketLoading ? 'Loading supermarket from backend...' : 'Waiting for backend layout...'}
+                        </p>
                     </div>
                 </div>
             );
@@ -182,9 +342,12 @@ export default function ShopPage() {
             case 'search':
                 return (
                     <ProductSearch
-                        products={MOCK_PRODUCTS}
+                        products={products}
                         onAddToList={handleAddToList}
                         onShowOnMap={handleShowProductOnMap}
+                        onSearch={searchProducts}
+                        isLoading={isProductsLoading}
+                        error={productsError}
                     />
                 );
             case 'list':
@@ -212,6 +375,7 @@ export default function ShopPage() {
                         userPosition={userPosition}
                         shoppingListItems={shoppingList}
                         highlightedItem={highlightedItem}
+                        routePath={routePath}
                     />
                 );
             default:
@@ -294,7 +458,12 @@ export default function ShopPage() {
             </nav>
 
             {/* Chatbot Button */}
-            <ChatbotButton />
+            <ChatbotButton
+                supermarketId={selectedSupermarket?.id}
+                onAddToList={handleAddToList}
+                onAddCustomItem={handleAddCustomItem}
+                onShowRoute={handleShowRoute}
+            />
         </div>
     );
 }
